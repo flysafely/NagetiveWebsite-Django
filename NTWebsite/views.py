@@ -1,19 +1,42 @@
+# from django.contrib.auth.models import User
 from django.contrib import auth
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password, check_password
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-# from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, render
 from django.template import Template, Context, RequestContext
-from NTWebsite import MainMethods as mMs
-from NTWebsite import AppConfig as aConf
-from NTWebsite.models import NotificationTable,RecommendAuthor,SpecialTopicComment,SpecialTopicReadsIP,SpecialTopicFollow,SpecialTopicInfo,UserCircuseeCollect,RollCallReadsIP,RollCallDialogue,RollCallInfo, UserCollect, UserLink, TopicArticleStatistic, ArticleUserLikesOrDislikesTable, CommentUserLikesOrDislikesTable, ArticleReadsIP, User, CategoryInfo, ArticleComment
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
+
 from PIL import Image as im
 from NTConfig import settings
+
+from NTWebsite import MainMethods as mMs
+from NTWebsite import AppConfig as aConf
+from NTWebsite.models import \
+NotificationTable,\
+RecommendAuthor,\
+SpecialTopicComment,\
+SpecialTopicReadsIP,\
+SpecialTopicFollow,\
+SpecialTopicInfo,\
+UserCircuseeCollect,\
+RollCallReadsIP,\
+RollCallDialogue,\
+RollCallInfo,\
+UserCollect,\
+UserLink,\
+TopicArticleStatistic,\
+ArticleUserLikesOrDislikesTable,\
+CommentUserLikesOrDislikesTable,\
+ArticleReadsIP,\
+User,\
+CategoryInfo,\
+ArticleComment
+
 import sys
 import os
 import base64
@@ -33,19 +56,46 @@ def CommentConversation(request):
         PageNumber = request.GET.get(
             'PageNumber') if 'PageNumber' in request.GET.keys() else ''
 
-        TopicsObject = TopicArticleStatistic.objects.get(TAS_ID=ObjectID)
         CommentsObject_Treated = []
         CommentInfos = []
+        
+        KeyWord = {'SpecialTopic':('SpecialTopicInfo','STI','STC'),'Article':('TopicArticleStatistic','TAS','AC')}
+        TopicsObject = eval('%s.objects.get(%s_ID=ObjectID)' % (KeyWord[From][0],KeyWord[From][1]))
+        
+        CommentsObjectReplayUser = eval('%sComment.objects.filter(%s_%sID=TopicsObject,%s_UserNickName=ReplayUser)' % (From,KeyWord[From][2],From,KeyWord[From][2]))
+        CommentsObjectReplayedUser = eval('%sComment.objects.filter(%s_%sID=TopicsObject,%s_UserNickName=ReplayedUser)' % (From,KeyWord[From][2],From,KeyWord[From][2]))
+        CommentsObject = list(CommentsObjectReplayUser) + list(CommentsObjectReplayedUser)
+        for CommentObject in CommentsObject:
+            print(CommentObject)
+            if eval("CommentObject.%s_Parent != ''" % (KeyWord[From][2])): 
+                if eval('%sComment.objects.get(%s_ID=CommentObject.%s_Parent).%s_UserNickName == ReplayedUser' % (From,KeyWord[From][2],KeyWord[From][2],KeyWord[From][2])) and eval("CommentObject.%s_UserNickName == ReplayUser" % (KeyWord[From][2])):
+                    CommentsObject_Treated.append(CommentObject)
+                if eval('%sComment.objects.get(%s_ID=CommentObject.%s_Parent).%s_UserNickName == ReplayUser' % (From,KeyWord[From][2],KeyWord[From][2],KeyWord[From][2])) and eval("CommentObject.%s_UserNickName == ReplayedUser" % (KeyWord[From][2])):
+                    CommentsObject_Treated.append(CommentObject)
+
+        for CommentObject_Treated in CommentsObject_Treated:
+            if eval("CommentObject_Treated.%s_Parent != ''" % (KeyWord[From][2])):
+                ParentCommentObject = eval('%sComment.objects.get(%s_ID=CommentObject_Treated.%s_Parent)' % (From,KeyWord[From][2],KeyWord[From][2]))
+                CommentInfos.append(
+                    ('HasParent', ParentCommentObject, CommentObject_Treated))
+            else:
+                CommentInfos.append(('HasNoParent', '', CommentObject_Treated))
+
+        '''        
         if From == 'SpecialTopic':
             TopicsObject = SpecialTopicInfo.objects.get(STI_ID=ObjectID)
+
             CommentsObject = SpecialTopicComment.objects.filter(STC_SpecialTopicID=TopicsObject,STC_UserNickName=ReplayUser)
+
             for CommentObject in CommentsObject:
                 if CommentObject.STC_Parent != '' and SpecialTopicComment.objects.get(STC_ID=CommentObject.STC_Parent).STC_UserNickName == ReplayedUser:
+
                     CommentsObject_Treated.append(CommentObject)
             for CommentObject_Treated in CommentsObject_Treated:
-                if CommentObject_Treated.STC_Parent:
-                    ParentCommentObject = SpecialTopicComment.objects.get(
-                        STC_ID=CommentObject_Treated.STC_Parent)
+                if CommentObject_Treated.STC_Parent != '':
+
+                    ParentCommentObject = SpecialTopicComment.objects.get(STC_ID=CommentObject_Treated.STC_Parent)
+
                     CommentInfos.append(
                         ('HasParent', ParentCommentObject, CommentObject_Treated))
                 else:
@@ -64,9 +114,7 @@ def CommentConversation(request):
                         ('HasParent', ParentCommentObject, CommentObject_Treated))
                 else:
                     CommentInfos.append(('HasNoParent', '', CommentObject_Treated))
-
-
-
+        '''
         comment_display = 'show' if len(CommentsObject_Treated) > ConfigData['CommentsPageLimit'] else 'hide'
         # 评论数据分页
         CommentsObject = RecordsetPaging(
@@ -132,6 +180,7 @@ def SpecialTopicsSquareInfoGet(request):
             page_href = '/SpecialTopicSquare?Part=SpecialTopicContent&FilterWord=' + FilterWord + '&PageNumber='
             return render(request, Query_condition['Template'], {"exportList_info": SpecialTopic,
                                                                  "SearchSource": 'SpecialTopic',
+                                                                 'IsCommentConversation':'False',
                                                                  "export_collectstatus": followstatus,
                                                                  "exportList_comment": CommentsObject,
                                                                  "comment_display": comment_display,
@@ -146,6 +195,7 @@ def SpecialTopicsSquareInfoGet(request):
 
             return render(request, Query_condition['Template'], {"exportList_info": SpecialTopicPageObjects,
                                                                  "SearchSource": 'SpecialTopic',
+                                                                 'IsCommentConversation':'False',
                                                                  "export_from": 'SpecialTopicsSquare',
                                                                  "topic_display": page_display,
                                                                  "export_href": page_href,
@@ -272,7 +322,7 @@ def RollCallPublish(request):
                     TargetUser = User.objects.get(UT_Nick = RollCallUserNick)
                     NewRollCall = RollCallInfo.objects.create(RCI_Title=RollCallTitle,RCI_Publisher=Publisher,RCI_Target=TargetUser)
                     NewDialogue = RollCallDialogue.objects.create(RCD_ID=NewRollCall,RCD_Query=RollCallContent)
-                    #print("&&&&&&&&&&&&&&&&&&&&&&&",NewRollCall.RCI_Title)
+
                     AddToNotificationTable('RollCallContent','',NewRollCall.RCI_ID,TargetUser)
                     return HttpResponse('publishok')
                 except Exception as e:
@@ -293,7 +343,7 @@ def Replay(request):
         From = request.POST.get('From')        
         if request.user.is_authenticated:
             userObject = User.objects.get(username=request.user.username)
-            # print('ArticleID:',ArticleID,'CommentID:',CommentID)
+
             if From == 'Topic':
                 Article = TopicArticleStatistic.objects.get(TAS_ID=ArticleID)
                 ArticleComment.objects.create(
@@ -724,8 +774,8 @@ def Login(request):
         # 注册信息获取
         username = request.POST.get('username')
         userpassword = request.POST.get('password')
-
         user = auth.authenticate(username=username, password=userpassword)
+
         if user:
             login(request, user)
             return HttpResponse(True)

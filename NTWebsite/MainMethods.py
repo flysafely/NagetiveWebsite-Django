@@ -7,7 +7,6 @@ from oscrypto._win import symmetric
 from NTWebsite.models import PreferredConfigName, ConfigParams
 import os
 
-
 def GetStringFromHtml(HtmlPath, filename, EncodeType="utf-8"):
     path = os.path.join(HtmlPath, filename)
     with open(path, encoding=EncodeType, errors="ignore") as htmlfile:

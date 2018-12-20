@@ -1,5 +1,28 @@
 from django.contrib import admin
-from NTWebsite.models import RecommendAuthor,SpecialTopicComment,SpecialTopicReadsIP,SpecialTopicFollow,SpecialTopicInfo,UserCircuseeCollect,RollCallReadsIP,RollCallDialogue,NotificationTable,RollCallInfo,UserCollect,UserLink,ConfigParams, PreferredConfigName, TopicArticleStatistic, User, ArticleUserLikesOrDislikesTable, CommentUserLikesOrDislikesTable,ArticleReadsIP, CategoryInfo, ArticleTags, TopicArticleTheme, ArticleComment
+from NTWebsite.models import \
+TopicArticleTheme,\
+ArticleTags,\
+ConfigParams,\
+PreferredConfigName,\
+NotificationTable,\
+RecommendAuthor,\
+SpecialTopicComment,\
+SpecialTopicReadsIP,\
+SpecialTopicFollow,\
+SpecialTopicInfo,\
+UserCircuseeCollect,\
+RollCallReadsIP,\
+RollCallDialogue,\
+RollCallInfo,\
+UserCollect,\
+UserLink,\
+TopicArticleStatistic,\
+ArticleUserLikesOrDislikesTable,\
+CommentUserLikesOrDislikesTable,\
+ArticleReadsIP,\
+User,\
+CategoryInfo,\
+ArticleComment
 # Register your models here.
 @admin.register(RecommendAuthor)
 class RecommendAuthorAdminView(admin.ModelAdmin):

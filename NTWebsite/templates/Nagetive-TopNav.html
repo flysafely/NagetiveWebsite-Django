@@ -28,21 +28,23 @@
                         </svg>
                     </a>
                     <nav class="AppHeader-nav">
-                        {% ifequal SearchSource 'Topic' %}
+                        {% if SearchSource == 'Topic' %}
                         <a class="AppHeader-navItem is-active" style="text-decoration:none;" href="/Topics?Part=Index&PageNumber=1">瞅瞅</a>
                         <a class="AppHeader-navItem" style="text-decoration:none;" href="/RollCallSquare?Part=RollCallIndex&PageNumber=1">素质广场</a>
                         <a class="AppHeader-navItem" style="text-decoration:none;" href="/SpecialTopicSquare?Part=SpecialTopicHot&PageNumber=1">X评专题</a>
-                        {% endifequal %}
-                        {% ifequal SearchSource 'RollCall' %}
+                        {% elif SearchSource == 'Article' %}
+                        <a class="AppHeader-navItem is-active" style="text-decoration:none;" href="/Topics?Part=Index&PageNumber=1">瞅瞅</a>
+                        <a class="AppHeader-navItem" style="text-decoration:none;" href="/RollCallSquare?Part=RollCallIndex&PageNumber=1">素质广场</a>
+                        <a class="AppHeader-navItem" style="text-decoration:none;" href="/SpecialTopicSquare?Part=SpecialTopicHot&PageNumber=1">X评专题</a>
+                        {% elif SearchSource == 'RollCall' %}
                         <a class="AppHeader-navItem" style="text-decoration:none;" href="/Topics?Part=Index&PageNumber=1">瞅瞅</a>
                         <a class="AppHeader-navItem is-active" style="text-decoration:none;" href="/RollCallSquare?Part=RollCallIndex&PageNumber=1">素质广场</a>
                         <a class="AppHeader-navItem" style="text-decoration:none;" href="/SpecialTopicSquare?Part=SpecialTopicHot&PageNumber=1">X评专题</a>
-                        {% endifequal %}
-                        {% ifequal SearchSource 'SpecialTopic' %}
+                        {% elif SearchSource == 'SpecialTopic' %}
                         <a class="AppHeader-navItem" style="text-decoration:none;" href="/Topics?Part=Index&PageNumber=1">瞅瞅</a>
                         <a class="AppHeader-navItem" style="text-decoration:none;" href="/RollCallSquare?Part=RollCallIndex&PageNumber=1">素质广场</a>
                         <a class="AppHeader-navItem is-active" style="text-decoration:none;" href="/SpecialTopicSquare?Part=SpecialTopicHot&PageNumber=1">X评专题</a>
-                        {% endifequal %}
+                        {% endif %}
                     </nav>
                     <div class="SearchBar">
                         <div class="SearchBar-toolWrapper">
