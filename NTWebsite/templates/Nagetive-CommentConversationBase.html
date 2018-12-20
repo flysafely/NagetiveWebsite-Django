@@ -1,0 +1,16 @@
+{% include "Nagetive-TopNav.html" %}
+    <main class="App-main">
+        <div class="Topstory">
+            <div class="Topstory-container" >
+                <div class="Topstory-mainColumn">
+                    {% if SearchSource == 'Topic' %}
+                    {% include "Nagetive-TopicComment.html" %}
+                    {% elif SearchSource == 'SpecialTopic' %}
+                    {% include "Nagetive-SpecialTopicComment.html" %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,99 @@
+/*!
+ * Styles intended only for this demo page. If you want to
+ * try and use Avgrund in your project, don't include these.
+ */
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html,
+body {
+	height: 100%;
+	overflow: hidden;
+}
+
+html {
+	background-color: #222;
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGklEQVQIW2NkYGD4D8SMQAwGcAY2AbBKDBUAVuYCBQPd34sAAAAASUVORK5CYII=);
+	background-repeat: repeat;
+}
+
+h1,
+h2 {
+	font-size: 24px;
+}
+
+p {
+	margin: 20px 0 20px 0;
+	font-size: 18px;
+	line-height: 1.4;
+}
+
+a {
+	color: #2faeff;
+	text-decoration: none;
+
+	-webkit-transition: 0.15s color ease;
+	   -moz-transition: 0.15s color ease;
+	    -ms-transition: 0.15s color ease;
+	     -o-transition: 0.15s color ease;
+	        transition: 0.15s color ease;
+}
+	a:hover {
+		color: #68c4ff;
+	}
+
+small {
+	display: block;
+	margin-top: 25px;
+	padding-top: 25px;
+	color: #333;
+	font-size: 16px;
+	line-height: 1.4;
+	border-top: 1px solid #ddd;
+
+	-webkit-text-size-adjust: none;
+}
+
+button {
+	border: 0px;
+	padding: 10px 14px;
+	margin: 5px 0px;
+	border-radius: 2px;
+
+	cursor: pointer;
+	color: #fff;
+	background: #2faeff;
+	font-size: 18px;
+
+	outline: none;
+
+	-webkit-transition: 0.15s background ease;
+	   -moz-transition: 0.15s background ease;
+	    -ms-transition: 0.15s background ease;
+	     -o-transition: 0.15s background ease;
+	        transition: 0.15s background ease;
+}
+	button:hover {
+		background: #68c4ff;
+	}
+	button:active {
+		background: #18a5ff;
+	}
+	button+button {
+		margin-left: 5px;
+	}
+
+.sharing {
+	margin-top: 50px;
+}
+
+body {
+	background: #fff;
+
+	font-family: 'Lato', Helvetica, sans-serif;
+	font-size: 16px;
+	color: #222;
+}

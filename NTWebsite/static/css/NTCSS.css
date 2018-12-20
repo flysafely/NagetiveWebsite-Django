@@ -1,0 +1,27 @@
+.commentbox
+{
+    height:70px; 
+    width:100%;
+    resize:vertical;
+    border-radius:2px; 
+    -moz-border-radius:2px; 
+    -webkit-border-radius:3px; 
+    border:1px solid #C0C0C0;
+    box-shadow:0.1px 0.1px 0.5px #C0C0C0;
+}
+.replaybox
+{
+    height:35px; 
+    width:100%;
+    resize:vertical;
+    border-radius:2px; 
+    -moz-border-radius:2px; 
+    -webkit-border-radius:3px; 
+    border:1px solid #C0C0C0;
+    box-shadow:0.1px 0.1px 0.5px #C0C0C0;
+}
+#para1
+{
+    text-align:center;
+    color:red;
+} 
