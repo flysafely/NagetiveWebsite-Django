@@ -40,7 +40,7 @@ urlpatterns = [
     path('Follow/', views.Follow),
     path('CollectCancel/', views.CollectCancel),
     path('Replay/', views.Replay),
-    path('CommentConversation/',views.CommentConversation),
+    path('CommentConversation',views.CommentConversation),
     re_path(r'^login/.*$', views.Login),
     re_path(r'^$', views.indexView),
     #re_path(r'^Topics/(?P<section>.*)/(?P<filterValue>.*)$', views.renderView),

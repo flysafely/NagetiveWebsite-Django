@@ -45,6 +45,7 @@
                         <div id='{{topiccomment.2.AC_ID}}'></div>
                     </div>
                     <div class="ContentItem-actions">
+                        {% if IsCommentConversation == 'False' %}
                         <span>
                             <button id="LikeButton#{{topiccomment.2.AC_ID}}" class="Button VoteButton VoteButton--up" onclick="javascript:StatisticTaste('Comment','LikeSpan#{{topiccomment.2.AC_ID}}','LikeButton#{{topiccomment.2.AC_ID}}')">
                                 <span>
@@ -77,6 +78,7 @@
                             <span style="margin-right:5px;"></span>
                             回复
                         </a>
+                        {% endif %}
                         <button type="button" class="ContentItem-action Button--plain Button--withIcon Button--withLabel" style="display: inline-flex; align-items: center;">
                             <span style="padding:3px 0px 0px 0px;">
                                 <svg viewBox="0 0 20 20" width="15" height="15" fill="#77839C">
@@ -87,8 +89,9 @@
                             <span style="margin-right:5px;"></span>
                             举报
                         </button>
+                        {% if IsCommentConversation == 'False' %}
                         {% if topiccomment.0 == 'HasParent' %}
-                        <button type="button" class="ContentItem-action Button--plain Button--withIcon Button--withLabel" style="display: inline-flex; align-items: center;" onclick="javascript:CommentConversation('/CommentConversation/','{{ csrf_token }}','{{exportList_info.0.TAS_ID}}','{{topiccomment.1.AC_UserNickName}}','{{topiccomment.2.AC_UserNickName.UT_Nick}}','{{SearchSource}}')">
+                        <button type="button" class="ContentItem-action Button--plain Button--withIcon Button--withLabel" style="display: inline-flex; align-items: center;" onclick="javascript:location.href='/CommentConversation?ObjectID={{exportList_info.0.TAS_ID}}&replayeduser={{topiccomment.1.AC_UserNickName}}&replayuser={{topiccomment.2.AC_UserNickName.UT_Nick}}&from={{SearchSource}}'">
                             <span style="padding:3px 0px 0px 0px;">
                                 <svg viewBox="0 0 20 20" width="15" height="15" fill="#77839C">
                                     <path d="M17 3c-1.104 0-2 0.895-2 2s0.896 2 2 2 2-0.895 2-2c0-1.105-0.896-2-2-2zM12.5 4h-11c-0.276 0-0.5 0.224-0.5 0.5v1c0 0.276 0.224 0.5 0.5 0.5h11c0.276 0 0.5-0.224 0.5-0.5v-1c0-0.276-0.224-0.5-0.5-0.5zM12.5 9h-11c-0.276 0-0.5 0.224-0.5 0.5v1c0 0.276 0.224 0.5 0.5 0.5h11c0.276 0 0.5-0.224 0.5-0.5v-1c0-0.276-0.224-0.5-0.5-0.5zM12.5 14h-11c-0.276 0-0.5 0.224-0.5 0.5v1c0 0.276 0.224 0.5 0.5 0.5h11c0.276 0 0.5-0.224 0.5-0.5v-1c0-0.276-0.224-0.5-0.5-0.5z" fill-rule="enenodd">
@@ -99,6 +102,7 @@
                             <span style="margin-right:5px;"></span>
                             查看对话
                         </button>
+                        {% endif %}
                         {% endif %}
                     </div>
                 </div>
