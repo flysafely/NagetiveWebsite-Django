@@ -81,40 +81,6 @@ def CommentConversation(request):
             else:
                 CommentInfos.append(('HasNoParent', '', CommentObject_Treated))
 
-        '''        
-        if From == 'SpecialTopic':
-            TopicsObject = SpecialTopicInfo.objects.get(STI_ID=ObjectID)
-
-            CommentsObject = SpecialTopicComment.objects.filter(STC_SpecialTopicID=TopicsObject,STC_UserNickName=ReplayUser)
-
-            for CommentObject in CommentsObject:
-                if CommentObject.STC_Parent != '' and SpecialTopicComment.objects.get(STC_ID=CommentObject.STC_Parent).STC_UserNickName == ReplayedUser:
-
-                    CommentsObject_Treated.append(CommentObject)
-            for CommentObject_Treated in CommentsObject_Treated:
-                if CommentObject_Treated.STC_Parent != '':
-
-                    ParentCommentObject = SpecialTopicComment.objects.get(STC_ID=CommentObject_Treated.STC_Parent)
-
-                    CommentInfos.append(
-                        ('HasParent', ParentCommentObject, CommentObject_Treated))
-                else:
-                    CommentInfos.append(('HasNoParent', '', CommentObject_Treated))
-        else:
-            TopicsObject = TopicArticleStatistic.objects.get(TAS_ID=ObjectID)
-            CommentsObject = ArticleComment.objects.filter(AC_ArticleID=TopicsObject,AC_UserNickName=ReplayUser)
-            for CommentObject in CommentsObject:
-                if CommentObject.AC_Parent != '' and ArticleComment.objects.get(AC_ID=CommentObject.AC_Parent).AC_UserNickName == ReplayedUser:
-                    CommentsObject_Treated.append(CommentObject)
-            for CommentObject_Treated in CommentsObject_Treated:
-                if CommentObject_Treated.AC_Parent:
-                    ParentCommentObject = ArticleComment.objects.get(
-                        AC_ID=CommentObject_Treated.AC_Parent)
-                    CommentInfos.append(
-                        ('HasParent', ParentCommentObject, CommentObject_Treated))
-                else:
-                    CommentInfos.append(('HasNoParent', '', CommentObject_Treated))
-        '''
         comment_display = 'show' if len(CommentsObject_Treated) > ConfigData['CommentsPageLimit'] else 'hide'
         # 评论数据分页
         CommentsObject = RecordsetPaging(
