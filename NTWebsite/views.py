@@ -43,8 +43,8 @@ def CommentConversation(request):
             for CommentObject in CommentsObject:
                 if CommentObject.AC_Parent != '' and ArticleComment.objects.get(AC_ID=CommentObject.AC_Parent).AC_UserNickName == ReplayedUser:
                     CommentsObject_Treated.append(CommentObject)
-        print('@@@',CommentsObject)
-        print('###',CommentsObject_Treated)
+        print('@@@@@',CommentsObject)
+        print('#####',CommentsObject_Treated)
 
 
 
