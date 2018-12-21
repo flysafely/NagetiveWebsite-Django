@@ -70,8 +70,13 @@ class User(AbstractUser):
         max_length=10, blank=True, null=True, default='天蝎座', verbose_name='星座')
     UT_FansCount = models.IntegerField(verbose_name='关注者数量', default=0)
     UT_FoucusCount = models.IntegerField(verbose_name='关注数量', default=0)
-    UT_TopicsCount = models.IntegerField(verbose_name='文章数量', default=0)
-    UT_CommentCount = models.IntegerField(verbose_name='评论数量', default=0)
+    UT_TopicsCount = models.IntegerField(verbose_name='文章发布数量', default=0)
+    UT_SpecialTopicsCount = models.IntegerField(verbose_name='专题发布数量', default=0)
+    UT_RollCallsCount = models.IntegerField(verbose_name='点名发布数量', default=0)
+    UT_RreplayCount = models.IntegerField(verbose_name='点名回复数量', default=0)
+    UT_TreplayCount = models.IntegerField(verbose_name='文章评论数量', default=0)
+    UT_SreplayCount = models.IntegerField(verbose_name='专题评论数量', default=0)
+
     class Meta(AbstractUser.Meta):
         # 末尾不加s
         #verbose_name_plural = '用户'

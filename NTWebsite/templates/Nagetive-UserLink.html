@@ -15,20 +15,21 @@
                 </div>
                 <div>
                     <div style="font-size:14px;color:#8590A6;display:inline-block;">
-                        111文章 ·
+                        {{userinfo.UL_UserBeLinked.UT_TopicsCount}}文章 ·
                     </div>
                     <div style="font-size:14px;color:#8590A6;display:inline-block;">
-                        450回答 ·
+                        {{userinfo.UL_UserBeLinked.UT_TreplayCount}}回答 ·
                     </div>
                     <div style="font-size:14px;color:#8590A6;display:inline-block;">
-                        1231关注者
+                        {{userinfo.UL_UserBeLinked.UT_FansCount}}关注者
                     </div>
                 </div>
             </div>
+            {% ifnotequal selforguest.0 'readonly' %}
             <div style="display:inline-block;margin:0px 0px 0px 0px;">
                 <button id='LinkButton' class="Button Button--blue" style="position:absolute;top:50%;transform:translate(-20%,-50%);width:80px;margin:0px 0px 0px 0px;font-size:13px;" onclick="javascript:UserLink('/UserLink/','{{ csrf_token }}','{{userinfo.UL_UserBeLinked.UT_Nick}}')">取消关注</button>
             </div>
-            
+            {% endifnotequal %}
         </div>
         {% endfor %}
         {% else %}
@@ -46,13 +47,13 @@
                 </div>
                 <div>
                     <div style="font-size:14px;color:#8590A6;display:inline-block;">
-                        111文章 ·
+                        {{userinfo.UL_UserBeLinking.UT_TopicsCount}}文章 ·
                     </div>
                     <div style="font-size:14px;color:#8590A6;display:inline-block;">
-                        450回答 ·
+                        {{userinfo.UL_UserBeLinking.UT_RreplayCount}}回答 ·
                     </div>
                     <div style="font-size:14px;color:#8590A6;display:inline-block;">
-                        1231关注者
+                        {{userinfo.UL_UserBeLinking.UT_FansCount}}关注者
                     </div>
                 </div>
             </div>

@@ -43,6 +43,11 @@ import base64
 import uuid
 import time
 
+def UserInfoOperation(UserName,field,method):
+    UserObject = User.objects.get(username=UserName)
+    exec('UserObject.%s%s' % (field,method))
+    UserObject.save()
+
 def CommentConversation(request):
     if request.method == 'GET':
         ConfigData = mMs.GetConfig()
@@ -65,6 +70,7 @@ def CommentConversation(request):
         CommentsObjectReplayUser = eval('%sComment.objects.filter(%s_%sID=TopicsObject,%s_UserNickName=ReplayUser)' % (From,KeyWord[From][2],From,KeyWord[From][2]))
         CommentsObjectReplayedUser = eval('%sComment.objects.filter(%s_%sID=TopicsObject,%s_UserNickName=ReplayedUser)' % (From,KeyWord[From][2],From,KeyWord[From][2]))
         CommentsObject = list(CommentsObjectReplayUser) + list(CommentsObjectReplayedUser)
+        
         for CommentObject in CommentsObject:
             print(CommentObject)
             if eval("CommentObject.%s_Parent != ''" % (KeyWord[From][2])): 
@@ -264,6 +270,7 @@ def RollCallReplay(request):
                 RollCallList[RollCallListLen-1].RCD_Reply = RollCallReplayContent
                 RollCallList[RollCallListLen-1].save()
                 AddToNotificationTable('RollCallContent','rollcallreplay',FilterWord,RollCallList[RollCallListLen-1].RCD_ID.RCI_Publisher)
+                UserInfoOperation(request.user.username,'UT_RreplayCount','+=1')
                 return HttpResponse('replayok')
             else:
 
@@ -272,7 +279,9 @@ def RollCallReplay(request):
             if request.user.UT_Nick == RollCallList[RollCallListLen-1].RCD_ID.RCI_Publisher.UT_Nick:
                 RollCallDialogue.objects.create(RCD_ID = RollCallList[RollCallListLen-1].RCD_ID,RCD_Query=RollCallReplayContent)
                 AddToNotificationTable('RollCallContent','rollcallreplay',FilterWord,RollCallList[RollCallListLen-1].RCD_ID.RCI_Target)
+                UserInfoOperation(request.user.username,'UT_RreplayCount','+=1')
                 return HttpResponse('replayok')
+
             else:
                 return HttpResponse('对方尚未回复!')
 
@@ -290,6 +299,7 @@ def RollCallPublish(request):
                     NewDialogue = RollCallDialogue.objects.create(RCD_ID=NewRollCall,RCD_Query=RollCallContent)
 
                     AddToNotificationTable('RollCallContent','',NewRollCall.RCI_ID,TargetUser)
+                    UserInfoOperation(request.user.username,'UT_RollCallsCount','+=1')
                     return HttpResponse('publishok')
                 except Exception as e:
                     return HttpResponse(e)
@@ -315,11 +325,13 @@ def Replay(request):
                 ArticleComment.objects.create(
                     AC_ArticleID=Article, AC_Comment=Comment, AC_Parent=CommentID, AC_UserNickName=userObject)
                 AddToNotificationTable('Topic','commentreplay',ArticleID,Article.TAS_Author)
+                UserInfoOperation(request.user.username,'UT_TreplayCount','+=1')
                 return HttpResponse('replayok')
             elif From == 'SpeciaTopic':
                 SpeciaTopic = SpecialTopicInfo.objects.get(STI_ID=ArticleID)
                 SpecialTopicComment.objects.create(STC_SpecialTopicID=SpeciaTopic, STC_Comment=Comment, STC_Parent=CommentID, STC_UserNickName=userObject)
                 AddToNotificationTable('SpecialTopicContent','commentreplay',SpeciaTopic,SpeciaTopic.STI_Publisher)
+                UserInfoOperation(request.user.username,'UT_SreplayCount','+=1')
                 return HttpResponse('replayok')
         else:
             return HttpResponse('login')
@@ -386,10 +398,14 @@ def Link(request):
             if not UserLink.objects.filter(UL_UserBeLinked=userObject.username, UL_UserLinking=request.user):
                 UserLink.objects.create(
                     UL_UserBeLinked=userObject, UL_UserLinking=request.user)
+                UserInfoOperation(request.user.username,'UT_FoucusCount','+=1')
+                UserInfoOperation(userObject.username,'UT_FansCount','+=1')
                 return HttpResponse('link')
             else:
                 UserLink.objects.filter(
                     UL_UserBeLinked=userObject, UL_UserLinking=request.user)[0].delete()
+                UserInfoOperation(request.user.username,'UT_FoucusCount','-=1')
+                UserInfoOperation(userObject.username,'UT_FansCount','-=1')
                 return HttpResponse('cancel')
         else:
             return HttpResponse('login')
@@ -647,6 +663,7 @@ def CreateUserArticle(request):
             try:
                 TopicArticleStatistic.objects.create(TAS_Author=request.user, TAS_Title=Title, TAS_Type=Category,
                                                      TAS_Content=ContentText, TAS_Description=ContentPoorText, TAS_Theme=Themes)
+                UserInfoOperation(request.user.username,'UT_TopicsCount','+=1')
                 return HttpResponse('ok')
             except Exception as e:
                 print(aConf.UNIQUE_ERROR[str(e)])
@@ -722,7 +739,7 @@ def StatisticTasteData(request):
 def TasteDataOperation(tableName, fieldName, method, param):
     Records = eval("%s.objects.get(%s_ID='%s')" %
                    (tableName, fieldName.split("_")[0], param))
-    #ArticleRecord = TopicArticleStatistic.objects.get(TAS_ID=ID)
+
     if method == '-':
         exec('Records.%s-= 1' % (fieldName))
         Records.save()
@@ -776,8 +793,6 @@ def Logout(request):
     if request.method == 'GET':
         auth.logout(request)
         return HttpResponse('Logout')
-        #return HttpResponseRedirect('/Topics?Part=Index&PageNumber=1')
-
 
 @csrf_exempt
 def UploadImg(request):
@@ -787,8 +802,6 @@ def UploadImg(request):
         return HttpResponse(True)
 
 #@login_required(redirect_field_name='')
-
-
 def Comment(request):
     if request.method == 'POST':
         From = request.POST.get('From')
@@ -806,6 +819,7 @@ def Comment(request):
                 Article.TAS_Comment += 1
                 Article.save()
                 AddToNotificationTable('Content','',ArticleID,Article.TAS_Author)
+                UserInfoOperation(request.user.username,'UT_TreplayCount','+=1')
                 return HttpResponse('ok')
             elif From == 'SpecialTopic':
                 SpecialTopic = SpecialTopicInfo.objects.get(STI_ID=ArticleID)
@@ -814,6 +828,7 @@ def Comment(request):
                 SpecialTopic.STI_Comment += 1
                 SpecialTopic.save()
                 AddToNotificationTable('SpecialTopicContent','',ArticleID,SpecialTopic.STI_Publisher)
+                UserInfoOperation(request.user.username,'UT_SreplayCount','+=1')
                 return HttpResponse('ok')                
         else:
             return HttpResponse('login')
