@@ -4,7 +4,7 @@
         {% csrf_token %}
         {% ifnotequal selforguest.0 'readonly' %}
         <div class="UserAvatarEditor ProfileHeader-avatar" style="margin:2px 0px 0px 16px;">
-            <img title="点击切换头像" id="UserImageChangeShow" target="UserImageChangeInput" style="cursor:pointer;-webkit-border-radius: 10px;border:4px solid #ffffff;box-shadow:0 0 10px 0 #E8EAED;" src="{{export_userinfo.UT_Avatar}}" width="160" height="160" onclick="javascript:UploadImg('UserImageChangeInput',this.id)">
+            <img title="点击切换头像" id="UserImageChangeShow" target="UserImageChangeInput" style="cursor:pointer;-webkit-border-radius: 10px;border:4px solid #ffffff;box-shadow:0 0 20px 0 #E8EAED;" src="{{export_userinfo.UT_Avatar}}" width="160" height="160" onclick="javascript:UploadImg('UserImageChangeInput',this.id)">
         </div>
         <div class="form-group" style="text-align:center;">
             <input id="UserImageChangeInput" type="file" data-source="" style="opacity:0; filter:alpha(opacity=0); height: 0px; width: 0px; position: absolute; top: 0; left: 0; z-index: 9;" name="pclogo" onchange="javascript:UploadUserImg(this)" accept="image/*">
@@ -29,7 +29,7 @@
             </span>
             {% elif selforguest.0 == 'readonly' and selforguest.4 == 'linked' %}
             <span>
-                <button id='LinkButton' class="Button Button--blue" style="width:80px;margin:0px 0px 0px 0px;font-size:13px;" onclick="javascript:UserLink('/UserLink/','{{ csrf_token }}','{{export_userinfo.UT_Nick}}')">取关</button>
+                <button id='LinkButton' class="Button Button--blue" style="width:80px;margin:0px 0px 0px 0px;font-size:13px;" onclick="javascript:UserLink('/UserLink/','{{ csrf_token }}','{{export_userinfo.UT_Nick}}')">取消关注</button>
             </span>
             {% endif %}
             <div>
