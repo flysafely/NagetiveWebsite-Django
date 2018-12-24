@@ -566,11 +566,11 @@ def TopicsInfoGet(request):
         Query_condition = aConf.Section_Map_Field[Part]
         TopicsInfoList = GetContextData(Query_condition['TableName'],
                                         Query_condition['JudgementCondition'] + str(
-                                            ConfigData['ReadsLimit']) if Part == 'Index' else Query_condition['JudgementCondition'] + "'" + FilterWord + "'",
+                                            ConfigData['ReadsLimit']) if Part in 'IndexOrderDate' else Query_condition['JudgementCondition'] + "'" + FilterWord + "'",
                                         operations=Query_condition['Operations'],
-                                        limit=ConfigData['TopicsLimit'] if Part in ['Index', 'Theme', 'Category', 'TopicSearch'] else ConfigData['CommentsLimit'])
+                                        limit=ConfigData['TopicsLimit'] if Part in ['Index', 'IndexOrderDate','Theme', 'Category', 'TopicSearch'] else ConfigData['CommentsLimit'])
 
-        if Part in ['Index', 'Theme', 'Category', 'TopicSearch']:
+        if Part in ['Index', 'IndexOrderDate','Theme', 'Category', 'TopicSearch']:
             TopicsInfoList_Treated = []
             CategorysInfoList = CategoryInfo.objects.all()
             RecommendAuthorInfoList = RecommendAuthor.objects.all()
