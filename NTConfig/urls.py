@@ -40,6 +40,7 @@ urlpatterns = [
     path('Follow/', views.Follow),
     path('CollectCancel/', views.CollectCancel),
     path('Replay/', views.Replay),
+    path('GetNotificationInfo/',views.GetNotificationInfo),
     path('CommentConversation',views.CommentConversation),
     re_path(r'^login/.*$', views.Login),
     re_path(r'^$', views.indexView),

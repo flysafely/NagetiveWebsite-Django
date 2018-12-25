@@ -80,7 +80,7 @@
                         </button>
                     </div>
                     <div class="AppHeader-userInfo">
-                        <button title="通知栏" style="margin: -25px 70px 0px 0px;position:relative;" type="button" class="AppHeader-fakeButton Button--plain Button--withIcon Button--iconOnly" data-toggle='modal' data-target="#NotificationBar">
+                        <button title="通知栏" style="margin: -25px 70px 0px 0px;position:relative;" type="button" class="AppHeader-fakeButton Button--plain Button--withIcon Button--iconOnly" data-toggle='modal' data-target="#NotificationBar" onclick="javascript:GetNotificationInfo('/GetNotificationInfo/')">
                             <span style="align-items: center;position:absolute; margin:0xp 0px 0px 0px;">
                                 <svg fill="#8590A6" viewBox="0 0 38 32" width="1.2em" height="1.2em">
                                     <g>
@@ -88,7 +88,9 @@
                                     </g>
                                 </svg>
                             </span>
-                            <span style="position:absolute;margin:-5px 10px;color:#fff;font-size:12px;background-color:#FABCBA;border:2px solid #fff;border-radius:30px;width:20px;text-shadow:1px 1px 2px #000;">1</span>
+                            {% ifnotequal NotificationCount '0' %}
+                            <span style="position:absolute;margin:-5px 10px;color:#fff;font-size:12px;background-color:#FABCBA;border:2px solid #fff;border-radius:30px;width:20px;text-shadow:1px 1px 2px #000;">{{NotificationCount}}</span>
+                            {% endifnotequal %}
                         </button>
                         <button title="消息栏" style="margin: -19px 70px 0px 0px;position:relative;" type="button" class="AppHeader-fakeButton Button--plain Button--withIcon Button--iconOnly" data-toggle='modal' data-target="#BulletinBoard">
                             <span style="align-items: center;position:absolute; margin:0xp 0px 0px 0px;">

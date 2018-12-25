@@ -451,13 +451,14 @@ class NotificationTable(models.Model):
     NT_KeyID = models.CharField(max_length=100,blank=False,default='',verbose_name='关键ID')
     NT_Plate = models.CharField(max_length=30,blank=False,verbose_name='板块')
     NT_Sign = models.CharField(max_length=30,blank=False,default='',verbose_name='标记')
+    NT_SourceUser = models.ForeignKey(
+        User, to_field='username', related_name='SourceUser', on_delete=models.CASCADE, verbose_name='通知者',default='')
     NT_TargetUser = models.ForeignKey(
-        User, to_field='username', on_delete=models.CASCADE, verbose_name='被通知者')
+        User, to_field='username', related_name='TargetUser', on_delete=models.CASCADE, verbose_name='被通知者')
 
     class Meta:
         # 末尾不加s
         verbose_name_plural = '**4**通知信息**4**'
-        pass
 
     def __str__(self):
         return str(self.NT_ID)

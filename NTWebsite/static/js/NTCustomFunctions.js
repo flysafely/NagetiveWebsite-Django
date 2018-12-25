@@ -1,4 +1,10 @@
-﻿function CommentConversation(url,csrftoken,ObjectID,replayuser,replayeduser,from){
+﻿function GetNotificationInfo(url){
+  $.get(url,{},function(returndata){
+    alert(returndata);
+  })
+}
+
+function CommentConversation(url,csrftoken,ObjectID,replayuser,replayeduser,from){
   $.post(url,{csrfmiddlewaretoken: csrftoken,'ObjectID':ObjectID,'replayuser':replayuser,'replayeduser':replayeduser,'from':from},function(status){})
 }
 

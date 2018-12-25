@@ -42,6 +42,7 @@ import os
 import base64
 import uuid
 import time
+import json
 
 def UserInfoOperation(UserName,field,method):
     UserObject = User.objects.get(username=UserName)
@@ -98,7 +99,8 @@ def CommentConversation(request):
                                                                          "exportList_comment": CommentsObject,
                                                                          "comment_display": comment_display,
                                                                          "export_href": page_href,
-                                                                         "search_placeholder": ConfigData['HotKeyWord']})
+                                                                         "search_placeholder": ConfigData['HotKeyWord'],
+                                                                         "NotificationCount": str(NotificationCount)})
 
 
 def SpecialTopicsSquareInfoGet(request):
@@ -157,7 +159,8 @@ def SpecialTopicsSquareInfoGet(request):
                                                                  "exportList_comment": CommentsObject,
                                                                  "comment_display": comment_display,
                                                                  "export_href": page_href,
-                                                                 "search_placeholder": ConfigData['HotKeyWord']})
+                                                                 "search_placeholder": ConfigData['HotKeyWord'],
+                                                                 "NotificationCount": str(NotificationCount)})
         else:
             page_display = 'show' if len(SpecialTopicList) > ConfigData['TopicsPageLimit'] else 'hide'
             SpecialTopicPageObjects = RecordsetPaging(
@@ -171,7 +174,8 @@ def SpecialTopicsSquareInfoGet(request):
                                                                  "export_from": 'SpecialTopicsSquare',
                                                                  "topic_display": page_display,
                                                                  "export_href": page_href,
-                                                                 "search_placeholder": ConfigData['HotKeyWord']})
+                                                                 "search_placeholder": ConfigData['HotKeyWord'],
+                                                                 "NotificationCount": str(NotificationCount)})
 
 def Circusee(request):
     if request.method =='GET':
@@ -219,7 +223,8 @@ def RollCallSquareInfoGet(request):
                                                                  "SearchSource": 'RollCall',
                                                                  "topic_display": page_display,
                                                                  "export_href": page_href,
-                                                                 "search_placeholder": ConfigData['HotKeyWord']})
+                                                                 "search_placeholder": ConfigData['HotKeyWord'],
+                                                                 "NotificationCount": str(NotificationCount)})
         else:
             ip = mMs.GetUserIP(request)
             Article = RollCallInfo.objects.get(RCI_ID=FilterWord)
@@ -269,7 +274,7 @@ def RollCallReplay(request):
             if request.user.UT_Nick == RollCallList[RollCallListLen-1].RCD_ID.RCI_Target.UT_Nick:
                 RollCallList[RollCallListLen-1].RCD_Reply = RollCallReplayContent
                 RollCallList[RollCallListLen-1].save()
-                AddToNotificationTable('RollCallContent','rollcallreplay',FilterWord,RollCallList[RollCallListLen-1].RCD_ID.RCI_Publisher)
+                AddToNotificationTable('RollCallContent','RollCallReplay',FilterWord,RollCallList[RollCallListLen-1].RCD_ID.RCI_Publisher,request.user)
                 UserInfoOperation(request.user.username,'UT_RreplayCount','+=1')
                 return HttpResponse('replayok')
             else:
@@ -278,7 +283,7 @@ def RollCallReplay(request):
         else:
             if request.user.UT_Nick == RollCallList[RollCallListLen-1].RCD_ID.RCI_Publisher.UT_Nick:
                 RollCallDialogue.objects.create(RCD_ID = RollCallList[RollCallListLen-1].RCD_ID,RCD_Query=RollCallReplayContent)
-                AddToNotificationTable('RollCallContent','rollcallreplay',FilterWord,RollCallList[RollCallListLen-1].RCD_ID.RCI_Target)
+                AddToNotificationTable('RollCallContent','RollCallReplay',FilterWord,RollCallList[RollCallListLen-1].RCD_ID.RCI_Target,request.user)
                 UserInfoOperation(request.user.username,'UT_RreplayCount','+=1')
                 return HttpResponse('replayok')
 
@@ -298,7 +303,7 @@ def RollCallPublish(request):
                     NewRollCall = RollCallInfo.objects.create(RCI_Title=RollCallTitle,RCI_Publisher=Publisher,RCI_Target=TargetUser)
                     NewDialogue = RollCallDialogue.objects.create(RCD_ID=NewRollCall,RCD_Query=RollCallContent)
 
-                    AddToNotificationTable('RollCallContent','',NewRollCall.RCI_ID,TargetUser)
+                    AddToNotificationTable('RollCallContent','RollCallPublish',NewRollCall.RCI_ID,TargetUser,request.user)
                     UserInfoOperation(request.user.username,'UT_RollCallsCount','+=1')
                     return HttpResponse('publishok')
                 except Exception as e:
@@ -324,13 +329,13 @@ def Replay(request):
                 Article = TopicArticleStatistic.objects.get(TAS_ID=ArticleID)
                 ArticleComment.objects.create(
                     AC_ArticleID=Article, AC_Comment=Comment, AC_Parent=CommentID, AC_UserNickName=userObject)
-                AddToNotificationTable('Topic','commentreplay',ArticleID,Article.TAS_Author)
+                AddToNotificationTable('Topic','commentreplay',ArticleID,Article.TAS_Author,request.user)
                 UserInfoOperation(request.user.username,'UT_TreplayCount','+=1')
                 return HttpResponse('replayok')
             elif From == 'SpeciaTopic':
                 SpeciaTopic = SpecialTopicInfo.objects.get(STI_ID=ArticleID)
                 SpecialTopicComment.objects.create(STC_SpecialTopicID=SpeciaTopic, STC_Comment=Comment, STC_Parent=CommentID, STC_UserNickName=userObject)
-                AddToNotificationTable('SpecialTopicContent','commentreplay',SpeciaTopic,SpeciaTopic.STI_Publisher)
+                AddToNotificationTable('SpecialTopicContent','SpeciaTopicCommentReplay',SpeciaTopic.STI_ID,SpeciaTopic.STI_Publisher,request.user)
                 UserInfoOperation(request.user.username,'UT_SreplayCount','+=1')
                 return HttpResponse('replayok')
         else:
@@ -542,7 +547,8 @@ def UserProfile(request):
                                                              "exportList_info": ObjectPaged,
                                                              "topic_display": topic_display,
                                                              "export_href": page_href,
-                                                             "search_placeholder": ConfigData['HotKeyWord']
+                                                             "search_placeholder": ConfigData['HotKeyWord'],
+                                                             "NotificationCount": str(NotificationCount)
                                                              })
 
 
@@ -563,6 +569,9 @@ def TopicsInfoGet(request):
         PageNumber = request.GET.get(
             'PageNumber') if 'PageNumber' in request.GET.keys() else ''
 
+
+        NotificationCount = GetNotificationCount(request)
+        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',NotificationCount)
         Query_condition = aConf.Section_Map_Field[Part]
         TopicsInfoList = GetContextData(Query_condition['TableName'],
                                         Query_condition['JudgementCondition'] + str(
@@ -591,7 +600,8 @@ def TopicsInfoGet(request):
                                                                  "exportList_author":RecommendAuthorInfoList,
                                                                  "topic_display": topic_display,
                                                                  "export_href": page_href,
-                                                                 "search_placeholder": ConfigData['HotKeyWord']})
+                                                                 "search_placeholder": ConfigData['HotKeyWord'],
+                                                                 "NotificationCount": str(NotificationCount)})
         elif Part == 'Content':
             ip = mMs.GetUserIP(request)
             Article = TopicArticleStatistic.objects.get(TAS_ID=FilterWord)
@@ -632,7 +642,8 @@ def TopicsInfoGet(request):
                                                                  "exportList_comment": CommentsObject,
                                                                  "comment_display": comment_display,
                                                                  "export_href": page_href,
-                                                                 "search_placeholder": ConfigData['HotKeyWord']})
+                                                                 "search_placeholder": ConfigData['HotKeyWord'],
+                                                                 "NotificationCount": str(NotificationCount)})
         else:
             return HttpResponse('TopicsInfoGet请求错误！')
 
@@ -818,7 +829,7 @@ def Comment(request):
                 # 评论数统计
                 Article.TAS_Comment += 1
                 Article.save()
-                AddToNotificationTable('Content','',ArticleID,Article.TAS_Author)
+                AddToNotificationTable('Content','SpeciaTopicComment',ArticleID,Article.TAS_Author,request.user)
                 UserInfoOperation(request.user.username,'UT_TreplayCount','+=1')
                 return HttpResponse('ok')
             elif From == 'SpecialTopic':
@@ -827,21 +838,40 @@ def Comment(request):
                 CommentObject.save()
                 SpecialTopic.STI_Comment += 1
                 SpecialTopic.save()
-                AddToNotificationTable('SpecialTopicContent','',ArticleID,SpecialTopic.STI_Publisher)
+                AddToNotificationTable('SpecialTopicContent','SpeciaTopicComment',ArticleID,SpecialTopic.STI_Publisher,request.user)
                 UserInfoOperation(request.user.username,'UT_SreplayCount','+=1')
                 return HttpResponse('ok')                
         else:
             return HttpResponse('login')
 
 
-def AddToNotificationTable(source, sign, keyid, user):
+def AddToNotificationTable(source, sign, keyid, targetUser,sourceUser):
     try:
-        NotificationTable.objects.create(NT_KeyID=keyid,NT_Sign=sign,NT_Plate=source,NT_TargetUser=user)
+        NotificationTable.objects.create(NT_KeyID=keyid,NT_Sign=sign,NT_Plate=source,NT_TargetUser=targetUser,NT_SourceUser=sourceUser)
     except Exception as e:
         raise e
 
-def GetNotificationInfo():
+def GetNotificationInfo(request):
+    if request.method == 'GET':
+        if request.user.is_authenticated:
+            try:
+                NotificationObjects = NotificationTable.objects.filter(NT_TargetUser=request.user)
+                data = [ { 'a' : 1, 'b' : 2, 'c' : 3, 'd' : 4, 'e' : 5 } ]
+                jsondata = json.dumps(data,ensure_ascii=False)
+                return HttpResponse(jsondata)
+            except Exception as e:
+                raise e
+
+def RemoveNotificationInfo(requestObject):
     pass
+
+def GetNotificationCount(requestObject):
+    if requestObject.user.is_authenticated:
+        try:
+            #NotificationTable.objects.filter(NT_TargetUser=requestObject.user)[0].delete()
+            return NotificationTable.objects.filter(NT_TargetUser=requestObject.user).count()
+        except Exception as e:
+            raise e
 
 def GetTemplate(templateName):
 
