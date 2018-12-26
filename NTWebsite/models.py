@@ -449,7 +449,8 @@ class NotificationTable(models.Model):
     NT_ID = models.UUIDField(
         primary_key=True, auto_created=True, default=uuid.uuid4, verbose_name='通知ID')
     NT_KeyID = models.CharField(max_length=100,blank=False,default='',verbose_name='关键ID')
-    NT_Plate = models.CharField(max_length=30,blank=False,verbose_name='板块')
+    NT_URL = models.CharField(max_length=30,blank=False,verbose_name='URL')
+    NT_Part = models.CharField(max_length=30,blank=False,default='',verbose_name='板块')
     NT_Sign = models.CharField(max_length=30,blank=False,default='',verbose_name='标记')
     NT_SourceUser = models.ForeignKey(
         User, to_field='username', related_name='SourceUser', on_delete=models.CASCADE, verbose_name='通知者',default='')

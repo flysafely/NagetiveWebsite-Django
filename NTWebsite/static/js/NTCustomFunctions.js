@@ -1,5 +1,30 @@
-﻿function GetNotificationInfo(url){
-  $.get(url,{},function(returndata){
+﻿function GetNotificationInfo(){
+  var PushNotificationslist = document.getElementById('PushNotifications-list');
+
+  $.get('/GetNotificationInfo/',{},function(returndata){
+    var jsonData = JSON.parse(returndata)
+    for (var i=0;i<jsonData.length;i++){
+      var NTDiv = document.createElement('div');
+      NTDiv.setAttribute('class', 'PushNotifications-item PushNotifications-newItem');
+      NTDiv.setAttribute('style', 'text-overflow:ellipsis; white-space:nowrap; overflow:hidden;');
+      NTDiv.setAttribute('id', jsonData[i].NT_ID);
+
+      var NTUser = document.createElement('a');
+      NTUser.setAttribute('href', '/UserProfile?UserNickName='+ jsonData[0].NT_TargetUser +'&Select=Publish&PageNumber=1');
+      NTUser.setAttribute('style', 'text-decoration:none;');
+      NTUser.innerText = jsonData[0].NT_TargetUser
+
+      var NTTopic = document.createElement('a');
+      NTTopic.setAttribute('href', '/UserProfile?UserNickName='+ jsonData[0].NT_TargetUser +'&Select=Publish&PageNumber=1');
+      NTTopic.setAttribute('style', 'text-decoration:none;');
+      NTTopic.innerText = jsonData[0].NT_TargetUser
+
+    }
+  })
+}
+
+function RemoveNotificationInfo(){
+  $.get('/RemoveNotificationInfo/',{},function(returndata){
     alert(returndata);
   })
 }

@@ -73,7 +73,7 @@ def CommentConversation(request):
         CommentsObject = list(CommentsObjectReplayUser) + list(CommentsObjectReplayedUser)
         
         for CommentObject in CommentsObject:
-            print(CommentObject)
+            #print(CommentObject)
             if eval("CommentObject.%s_Parent != ''" % (KeyWord[From][2])): 
                 if eval('%sComment.objects.get(%s_ID=CommentObject.%s_Parent).%s_UserNickName == ReplayedUser' % (From,KeyWord[From][2],KeyWord[From][2],KeyWord[From][2])) and eval("CommentObject.%s_UserNickName == ReplayUser" % (KeyWord[From][2])):
                     CommentsObject_Treated.append(CommentObject)
@@ -112,6 +112,7 @@ def SpecialTopicsSquareInfoGet(request):
             'FilterWord') if 'FilterWord' in request.GET.keys() else ''
         PageNumber = request.GET.get(
             'PageNumber') if 'PageNumber' in request.GET.keys() else ''
+        NotificationCount = GetNotificationCount(request)
         Query_condition = aConf.Section_Map_Field[Part]
         SpecialTopicList = GetContextData(Query_condition['TableName'],
                                         Query_condition['JudgementCondition'] + str(
@@ -206,6 +207,7 @@ def RollCallSquareInfoGet(request):
         PageNumber = request.GET.get(
             'PageNumber') if 'PageNumber' in request.GET.keys() else ''
 
+        NotificationCount = GetNotificationCount(request)
         Query_condition = aConf.Section_Map_Field[Part]
         RollCallList = GetContextData(Query_condition['TableName'],
                                         Query_condition['JudgementCondition'] + str(
@@ -257,7 +259,8 @@ def RollCallSquareInfoGet(request):
             return render(request, Query_condition['Template'],{"export_RollCallDialogue":RollCallList,
                                                                 "SearchSource":'RollCall',
                                                                 "Replay_Display":Replay_Display,
-                                                                "Replay_location":Replay_location,})  
+                                                                "Replay_location":Replay_location,
+                                                                "NotificationCount": str(NotificationCount)})  
 
 def RollCallReplay(request):
     if request.method == 'POST':
@@ -274,7 +277,7 @@ def RollCallReplay(request):
             if request.user.UT_Nick == RollCallList[RollCallListLen-1].RCD_ID.RCI_Target.UT_Nick:
                 RollCallList[RollCallListLen-1].RCD_Reply = RollCallReplayContent
                 RollCallList[RollCallListLen-1].save()
-                AddToNotificationTable('RollCallContent','RollCallReplay',FilterWord,RollCallList[RollCallListLen-1].RCD_ID.RCI_Publisher,request.user)
+                AddToNotificationTable('RollCallSquare','RollCallContent','RollCallRepaly',FilterWord,RollCallList[RollCallListLen-1].RCD_ID.RCI_Publisher,request.user)
                 UserInfoOperation(request.user.username,'UT_RreplayCount','+=1')
                 return HttpResponse('replayok')
             else:
@@ -283,7 +286,7 @@ def RollCallReplay(request):
         else:
             if request.user.UT_Nick == RollCallList[RollCallListLen-1].RCD_ID.RCI_Publisher.UT_Nick:
                 RollCallDialogue.objects.create(RCD_ID = RollCallList[RollCallListLen-1].RCD_ID,RCD_Query=RollCallReplayContent)
-                AddToNotificationTable('RollCallContent','RollCallReplay',FilterWord,RollCallList[RollCallListLen-1].RCD_ID.RCI_Target,request.user)
+                AddToNotificationTable('RollCallSquare','RollCallContent','RollCallRepaly',FilterWord,RollCallList[RollCallListLen-1].RCD_ID.RCI_Target,request.user)
                 UserInfoOperation(request.user.username,'UT_RreplayCount','+=1')
                 return HttpResponse('replayok')
 
@@ -303,7 +306,7 @@ def RollCallPublish(request):
                     NewRollCall = RollCallInfo.objects.create(RCI_Title=RollCallTitle,RCI_Publisher=Publisher,RCI_Target=TargetUser)
                     NewDialogue = RollCallDialogue.objects.create(RCD_ID=NewRollCall,RCD_Query=RollCallContent)
 
-                    AddToNotificationTable('RollCallContent','RollCallPublish',NewRollCall.RCI_ID,TargetUser,request.user)
+                    AddToNotificationTable('RollCallSquare','RollCallContent','RollCallPublish',NewRollCall.RCI_ID,TargetUser,request.user)
                     UserInfoOperation(request.user.username,'UT_RollCallsCount','+=1')
                     return HttpResponse('publishok')
                 except Exception as e:
@@ -329,13 +332,13 @@ def Replay(request):
                 Article = TopicArticleStatistic.objects.get(TAS_ID=ArticleID)
                 ArticleComment.objects.create(
                     AC_ArticleID=Article, AC_Comment=Comment, AC_Parent=CommentID, AC_UserNickName=userObject)
-                AddToNotificationTable('Topic','commentreplay',ArticleID,Article.TAS_Author,request.user)
+                AddToNotificationTable('Topics','Content','CommentReplay',ArticleID,Article.TAS_Author,request.user)
                 UserInfoOperation(request.user.username,'UT_TreplayCount','+=1')
                 return HttpResponse('replayok')
             elif From == 'SpeciaTopic':
                 SpeciaTopic = SpecialTopicInfo.objects.get(STI_ID=ArticleID)
                 SpecialTopicComment.objects.create(STC_SpecialTopicID=SpeciaTopic, STC_Comment=Comment, STC_Parent=CommentID, STC_UserNickName=userObject)
-                AddToNotificationTable('SpecialTopicContent','SpeciaTopicCommentReplay',SpeciaTopic.STI_ID,SpeciaTopic.STI_Publisher,request.user)
+                AddToNotificationTable('SpecialTopicSquare','SpecialTopicContent','CommentReplay',SpeciaTopic.STI_ID,SpeciaTopic.STI_Publisher,request.user)
                 UserInfoOperation(request.user.username,'UT_SreplayCount','+=1')
                 return HttpResponse('replayok')
         else:
@@ -571,7 +574,7 @@ def TopicsInfoGet(request):
 
 
         NotificationCount = GetNotificationCount(request)
-        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',NotificationCount)
+        #print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',NotificationCount)
         Query_condition = aConf.Section_Map_Field[Part]
         TopicsInfoList = GetContextData(Query_condition['TableName'],
                                         Query_condition['JudgementCondition'] + str(
@@ -829,7 +832,7 @@ def Comment(request):
                 # 评论数统计
                 Article.TAS_Comment += 1
                 Article.save()
-                AddToNotificationTable('Content','SpeciaTopicComment',ArticleID,Article.TAS_Author,request.user)
+                AddToNotificationTable('Topics','Content','Comment',ArticleID,Article.TAS_Author,request.user)
                 UserInfoOperation(request.user.username,'UT_TreplayCount','+=1')
                 return HttpResponse('ok')
             elif From == 'SpecialTopic':
@@ -838,16 +841,16 @@ def Comment(request):
                 CommentObject.save()
                 SpecialTopic.STI_Comment += 1
                 SpecialTopic.save()
-                AddToNotificationTable('SpecialTopicContent','SpeciaTopicComment',ArticleID,SpecialTopic.STI_Publisher,request.user)
+                AddToNotificationTable('SpecialTopicSquare','SpecialTopicContent','Comment',ArticleID,SpecialTopic.STI_Publisher,request.user)
                 UserInfoOperation(request.user.username,'UT_SreplayCount','+=1')
                 return HttpResponse('ok')                
         else:
             return HttpResponse('login')
 
 
-def AddToNotificationTable(source, sign, keyid, targetUser,sourceUser):
+def AddToNotificationTable(url, part, sign, keyid, targetUser,sourceUser):
     try:
-        NotificationTable.objects.create(NT_KeyID=keyid,NT_Sign=sign,NT_Plate=source,NT_TargetUser=targetUser,NT_SourceUser=sourceUser)
+        NotificationTable.objects.create(NT_KeyID=keyid,NT_Part=part,NT_Sign=sign,NT_URL=url,NT_TargetUser=targetUser,NT_SourceUser=sourceUser)
     except Exception as e:
         raise e
 
@@ -856,9 +859,22 @@ def GetNotificationInfo(request):
         if request.user.is_authenticated:
             try:
                 NotificationObjects = NotificationTable.objects.filter(NT_TargetUser=request.user)
-                data = [ { 'a' : 1, 'b' : 2, 'c' : 3, 'd' : 4, 'e' : 5 } ]
-                jsondata = json.dumps(data,ensure_ascii=False)
-                return HttpResponse(jsondata)
+                if NotificationObjects:
+                    dataList = []
+                    for Object in NotificationObjects:
+                        dataDict = {}
+                        dataDict['NT_ID'] = str(Object.NT_ID)
+                        dataDict['NT_KeyID'] = Object.NT_KeyID
+                        dataDict['NT_Plate'] = Object.NT_Plate
+                        dataDict['NT_Sign'] = Object.NT_Sign
+                        dataDict['NT_SourceUser'] = Object.NT_SourceUser.UT_Nick
+                        dataList.append(dataDict)
+                    #print(dataList)
+                    jsondata = json.dumps(dataList,ensure_ascii=False)
+                    return HttpResponse(jsondata)
+                else:
+                    return HttpResponse('None')
+
             except Exception as e:
                 raise e
 
@@ -872,6 +888,8 @@ def GetNotificationCount(requestObject):
             return NotificationTable.objects.filter(NT_TargetUser=requestObject.user).count()
         except Exception as e:
             raise e
+    else:
+        return 0
 
 def GetTemplate(templateName):
 

@@ -35,11 +35,11 @@
                         <a style="font-size:12px;color:#FFFFFF;float:left;margin:1px 3px 0px 0px;background:#8590A6;border-radius:5px;padding:0px 4px 0px 4px;text-decoration:none;" href="/Topics?Part=Theme&FilterWord={{theme}}&PageNumber=1">{{theme}}</a> 
                         {% endfor %}                       
                     </div><br>
-                    <div class="FeedSource-firstline" style="margin:2px;display:block;">
+                    <div class="FeedSource-firstline" style="margin:2px;display:block;overflow: hidden;text-overflow:ellipsis; white-space:nowrap;">
                     	<img width=25 height=25 style="cursor:pointer;-webkit-border-radius: 12.5px;" src="{{topicitem.0.TAS_Author.UT_Avatar}}" title="{{topicitem.TAS_Author.username}}">
                         <a style="color:#333333;font-size:14px;text-decoration:none;" href="/UserProfile?UserNickName={{topicitem.0.TAS_Author.UT_Nick}}&Select=Publish&PageNumber=1"><b>{{topicitem.0.TAS_Author}}</b></a>
                         <span style="padding: 0px 0px 0px 2px">,</span>
-                        <span style="padding: 0px 0px 0px 0px;font-size:14px;color:#8590A6;width:60%;overflow: hidden;text-overflow:ellipsis; white-space:nowrap;">{{topicitem.0.TAS_Author.UT_Description}}</span>
+                        <span style="padding: 0px 0px 0px 0px;font-size:14px;color:#8590A6;width:60%;">{{topicitem.0.TAS_Author.UT_Description}}</span>
                     </div>
                 </div>
                 <div>

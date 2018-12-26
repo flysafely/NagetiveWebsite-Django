@@ -52,7 +52,7 @@ class RollCallDialogueAdminView(admin.ModelAdmin):
 
 @admin.register(NotificationTable)
 class NotificationTableAdminView(admin.ModelAdmin):
-    list_display = ('NT_Plate','NT_TargetUser',)
+    list_display = ('NT_URL','NT_TargetUser',)
 
 @admin.register(RollCallInfo)
 class RollCallInfoAdminView(admin.ModelAdmin):
