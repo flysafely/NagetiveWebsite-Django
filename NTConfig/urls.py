@@ -42,6 +42,7 @@ urlpatterns = [
     path('Replay/', views.Replay),
     path('GetNotificationInfo/',views.GetNotificationInfo),
     path('CommentConversation',views.CommentConversation),
+    path('RemoveNotificationInfo/',views.RemoveNotificationInfo),
     re_path(r'^login/.*$', views.Login),
     re_path(r'^$', views.indexView),
     #re_path(r'^Topics/(?P<section>.*)/(?P<filterValue>.*)$', views.renderView),

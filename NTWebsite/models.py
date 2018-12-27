@@ -8,7 +8,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 import uuid
-    
+
 
 class ConfigParams(models.Model):
     """docstring for ConfigParams"""
@@ -71,7 +71,8 @@ class User(AbstractUser):
     UT_FansCount = models.IntegerField(verbose_name='关注者数量', default=0)
     UT_FoucusCount = models.IntegerField(verbose_name='关注数量', default=0)
     UT_TopicsCount = models.IntegerField(verbose_name='文章发布数量', default=0)
-    UT_SpecialTopicsCount = models.IntegerField(verbose_name='专题发布数量', default=0)
+    UT_SpecialTopicsCount = models.IntegerField(
+        verbose_name='专题发布数量', default=0)
     UT_RollCallsCount = models.IntegerField(verbose_name='点名发布数量', default=0)
     UT_RreplayCount = models.IntegerField(verbose_name='点名回复数量', default=0)
     UT_TreplayCount = models.IntegerField(verbose_name='文章评论数量', default=0)
@@ -262,7 +263,7 @@ class UserLink(models.Model):
     UL_UserBeLinked = models.ForeignKey(
         User, to_field='username', null=False, blank=False, on_delete=models.CASCADE, verbose_name='被关注用户')
     UL_UserLinking = models.ForeignKey(
-        User, to_field='username', related_name='UserNameLinking',null=False, blank=False, on_delete=models.CASCADE, verbose_name='关注用户')
+        User, to_field='username', related_name='UserNameLinking', null=False, blank=False, on_delete=models.CASCADE, verbose_name='关注用户')
     UL_LinkTime = models.DateField(auto_now=True, verbose_name='时间')
 
     class Meta:
@@ -279,7 +280,8 @@ class UserCollect(models.Model):
     UC_CollectTime = models.DateField(auto_now=True, verbose_name='时间')
 
     class Meta:
-        verbose_name_plural = '**1**文章用户收藏**1**'  
+        verbose_name_plural = '**1**文章用户收藏**1**'
+
 
 class RollCallInfo(models.Model):
     """docstring for RollCallInfo"""
@@ -289,14 +291,15 @@ class RollCallInfo(models.Model):
         max_length=35, unique=True, verbose_name='点名标题')
     RCI_EditDate = models.DateField(auto_now=True, verbose_name='编辑时间')
     RCI_Publisher = models.ForeignKey(
-        User, to_field='username', related_name='Publisher_User', on_delete=models.CASCADE,verbose_name='点名者')
+        User, to_field='username', related_name='Publisher_User', on_delete=models.CASCADE, verbose_name='点名者')
     RCI_Target = models.ForeignKey(
-        User, to_field='username', related_name='Target_User', on_delete=models.CASCADE,verbose_name='被点名者')
+        User, to_field='username', related_name='Target_User', on_delete=models.CASCADE, verbose_name='被点名者')
     RCI_LeftLike = models.IntegerField(
         default=0, blank=False, verbose_name='点名者支持数')
     RCI_RightLike = models.IntegerField(
         default=0, blank=False, verbose_name='被点名者支持数')
-    RCI_Read = models.IntegerField(default=0, blank=False, verbose_name='点名阅读量')
+    RCI_Read = models.IntegerField(
+        default=0, blank=False, verbose_name='点名阅读量')
 
     class Meta:
         # 末尾不加s
@@ -304,13 +307,17 @@ class RollCallInfo(models.Model):
         pass
 
     def __str__(self):
-        return self.RCI_Title    
+        return self.RCI_Title
+
 
 class RollCallDialogue(models.Model):
-    RCD_ID = models.ForeignKey(RollCallInfo,to_field='RCI_ID',on_delete=models.CASCADE,verbose_name='点名信息') 
+    RCD_ID = models.ForeignKey(
+        RollCallInfo, to_field='RCI_ID', on_delete=models.CASCADE, verbose_name='点名信息')
     RCD_EditDate = models.DateField(auto_now=True, verbose_name='编辑时间')
-    RCD_Query = models.CharField(max_length=30,default='',blank=False,verbose_name='询问内容')
-    RCD_Reply = models.CharField(max_length=30,default='',blank=False,verbose_name='回复内容')
+    RCD_Query = models.CharField(
+        max_length=30, default='', blank=False, verbose_name='询问内容')
+    RCD_Reply = models.CharField(
+        max_length=30, default='', blank=False, verbose_name='回复内容')
 
     class Meta:
         # 末尾不加s
@@ -320,10 +327,11 @@ class RollCallDialogue(models.Model):
     def __str__(self):
         return str(self.RCD_ID.RCI_ID)
 
+
 class RollCallReadsIP(models.Model):
     """docstring for RollCallReadsIP"""
     RCR_IP = models.CharField(max_length=100, null=True,
-                             blank=True, verbose_name='IP')
+                              blank=True, verbose_name='IP')
     RCR_EditDate = models.DateField(auto_now=True, verbose_name='时间')
     # AR_ArticleID = models.CharField(max_length=100, null=True,
     #                                blank=True, verbose_name='文章ID')
@@ -337,15 +345,16 @@ class RollCallReadsIP(models.Model):
     def __str__(self):
         return self.RCR_IP
 
+
 class UserCircuseeCollect(models.Model):
     UCC_UserNickName = models.ForeignKey(
         User, to_field='username', default='flysafely', on_delete=models.CASCADE, verbose_name='用户名')
     UCC_RollCall = models.ForeignKey(
         RollCallInfo, to_field='RCI_ID', on_delete=models.CASCADE, verbose_name='点名ID')
-    UCC_CollectTime = models.DateField(auto_now=True,verbose_name='时间')
+    UCC_CollectTime = models.DateField(auto_now=True, verbose_name='时间')
 
     class Meta:
-        verbose_name_plural = '**2**用户围观**2**'  
+        verbose_name_plural = '**2**用户围观**2**'
 
 
 class SpecialTopicInfo(models.Model):
@@ -354,18 +363,24 @@ class SpecialTopicInfo(models.Model):
         primary_key=True, auto_created=True, default=uuid.uuid4, verbose_name='专题ID')
     STI_Title = models.CharField(
         max_length=35, unique=True, verbose_name='专题标题')
-    STI_Cover = models.ImageField(upload_to='Cover',blank=False,verbose_name='封面图',default='')
-    STI_Cover_210x140 = ImageSpecField(source='STI_Cover',processors=[SmartResize(210, 140)],format='JPEG',options={'quality': 95})
-    STI_Cover_SR965x300 = ImageSpecField(source='STI_Cover',processors=[SmartResize(965, 300)],format='JPEG',options={'quality': 95})
+    STI_Cover = models.ImageField(
+        upload_to='Cover', blank=False, verbose_name='封面图', default='')
+    STI_Cover_210x140 = ImageSpecField(source='STI_Cover', processors=[
+                                       SmartResize(210, 140)], format='JPEG', options={'quality': 95})
+    STI_Cover_SR965x300 = ImageSpecField(source='STI_Cover', processors=[
+                                         SmartResize(965, 300)], format='JPEG', options={'quality': 95})
     STI_EditDate = models.DateField(auto_now=True, verbose_name='发布时间')
     STI_Publisher = models.ForeignKey(
-        User, to_field='username', related_name='Publisher', on_delete=models.CASCADE,verbose_name='发布者')
-    STI_Type = models.CharField(max_length=10,default='article',verbose_name='专题类型')
+        User, to_field='username', related_name='Publisher', on_delete=models.CASCADE, verbose_name='发布者')
+    STI_Type = models.CharField(
+        max_length=10, default='article', verbose_name='专题类型')
     STI_Follower = models.IntegerField(
         default=0, blank=False, verbose_name='关注量')
     STI_Hot = models.IntegerField(default=10, blank=False, verbose_name='热度')
-    STI_Abstract = models.CharField(max_length=30,blank=False,default='',verbose_name='简介')
-    STI_Content = RichTextUploadingField(null=True, blank=True, config_name='admin', verbose_name='正文')
+    STI_Abstract = models.CharField(
+        max_length=30, blank=False, default='', verbose_name='简介')
+    STI_Content = RichTextUploadingField(
+        null=True, blank=True, config_name='admin', verbose_name='正文')
     STI_Comment = models.IntegerField(verbose_name='评论数', default=0)
 
     class Meta:
@@ -374,22 +389,24 @@ class SpecialTopicInfo(models.Model):
         pass
 
     def __str__(self):
-        return self.STI_Title      
+        return self.STI_Title
+
 
 class SpecialTopicFollow(models.Model):
     STF_UserNickName = models.ForeignKey(
         User, to_field='username', default='flysafely', on_delete=models.CASCADE, verbose_name='用户名')
     STF_SpecialTopic = models.ForeignKey(
         SpecialTopicInfo, to_field='STI_ID', on_delete=models.CASCADE, verbose_name='专题ID')
-    STF_CollectTime = models.DateField(auto_now=True,verbose_name='时间')
+    STF_CollectTime = models.DateField(auto_now=True, verbose_name='时间')
 
     class Meta:
-        verbose_name_plural = '**3**专题关注**3**'  
+        verbose_name_plural = '**3**专题关注**3**'
+
 
 class SpecialTopicReadsIP(models.Model):
     """docstring for SpecialTopicReadsIP"""
     STR_IP = models.CharField(max_length=100, null=True,
-                             blank=True, verbose_name='IP')
+                              blank=True, verbose_name='IP')
     STR_EditDate = models.DateField(auto_now=True, verbose_name='时间')
     # AR_ArticleID = models.CharField(max_length=100, null=True,
     #                                blank=True, verbose_name='文章ID')
@@ -432,11 +449,13 @@ class SpecialTopicComment(models.Model):
     def __str__(self):
         return self.STC_Comment
 
+
 class RecommendAuthor(models.Model):
     RA_Author = models.ForeignKey(
         User, to_field='username', default='flysafely', on_delete=models.CASCADE, verbose_name='用户名')
     RA_Rank = models.IntegerField(
         default=0, blank=False, verbose_name='顺序')
+
     class Meta:
         # 末尾不加s
         verbose_name_plural = '**1**推荐用户**1**'
@@ -444,16 +463,22 @@ class RecommendAuthor(models.Model):
     def __str__(self):
         return self.RA_Author.UT_Nick
 
+
 class NotificationTable(models.Model):
 
     NT_ID = models.UUIDField(
         primary_key=True, auto_created=True, default=uuid.uuid4, verbose_name='通知ID')
-    NT_KeyID = models.CharField(max_length=100,blank=False,default='',verbose_name='关键ID')
-    NT_URL = models.CharField(max_length=30,blank=False,verbose_name='URL')
-    NT_Part = models.CharField(max_length=30,blank=False,default='',verbose_name='板块')
-    NT_Sign = models.CharField(max_length=30,blank=False,default='',verbose_name='标记')
+    NT_KeyID = models.CharField(
+        max_length=100, blank=False, default='', verbose_name='关键ID')
+    NT_Title = models.CharField(
+        max_length=100, blank=False, default='', verbose_name='标题')
+    NT_URL = models.CharField(max_length=30, blank=False, verbose_name='URL')
+    NT_Part = models.CharField(
+        max_length=30, blank=False, default='', verbose_name='板块')
+    NT_Sign = models.CharField(
+        max_length=30, blank=False, default='', verbose_name='标记')
     NT_SourceUser = models.ForeignKey(
-        User, to_field='username', related_name='SourceUser', on_delete=models.CASCADE, verbose_name='通知者',default='')
+        User, to_field='username', related_name='SourceUser', on_delete=models.CASCADE, verbose_name='通知者', default='')
     NT_TargetUser = models.ForeignKey(
         User, to_field='username', related_name='TargetUser', on_delete=models.CASCADE, verbose_name='被通知者')
 

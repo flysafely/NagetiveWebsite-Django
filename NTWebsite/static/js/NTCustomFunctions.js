@@ -1,32 +1,71 @@
 ﻿function GetNotificationInfo(){
   var PushNotificationslist = document.getElementById('PushNotifications-list');
-
+  if(PushNotificationslist){
+    while(PushNotificationslist.hasChildNodes()){
+      PushNotificationslist.removeChild(PushNotificationslist.firstChild);
+    }
+  }  
   $.get('/GetNotificationInfo/',{},function(returndata){
-    var jsonData = JSON.parse(returndata)
-    for (var i=0;i<jsonData.length;i++){
-      var NTDiv = document.createElement('div');
-      NTDiv.setAttribute('class', 'PushNotifications-item PushNotifications-newItem');
-      NTDiv.setAttribute('style', 'text-overflow:ellipsis; white-space:nowrap; overflow:hidden;');
-      NTDiv.setAttribute('id', jsonData[i].NT_ID);
+    if (returndata == 'login'){
+      document.getElementById('loginbutton').click();  
+    }else{
+      var jsonData = JSON.parse(returndata)
+      for (var i=0;i<jsonData.length;i++){
+        var NTDiv = document.createElement('div');
+        NTDiv.setAttribute('class', 'PushNotifications-item PushNotifications-newItem');
+        NTDiv.setAttribute('style', 'font-size:14px;width:363px;background:#ffffff;border-bottom:1px solid  #EBEBEB;text-overflow:ellipsis; white-space:nowrap; overflow:hidden;');
+        NTDiv.setAttribute('id', jsonData[i].NT_ID);
 
-      var NTUser = document.createElement('a');
-      NTUser.setAttribute('href', '/UserProfile?UserNickName='+ jsonData[0].NT_TargetUser +'&Select=Publish&PageNumber=1');
-      NTUser.setAttribute('style', 'text-decoration:none;');
-      NTUser.innerText = jsonData[0].NT_TargetUser
+        var NTUser = document.createElement('a');
+        NTUser.setAttribute('href', '/UserProfile?UserNickName='+ jsonData[i].NT_SourceUser +'&Select=Publish&PageNumber=1');
+        NTUser.setAttribute('style', 'text-decoration:none;');
+        NTUser.innerText = jsonData[i].NT_SourceUser + ' ';
 
-      var NTTopic = document.createElement('a');
-      NTTopic.setAttribute('href', '/UserProfile?UserNickName='+ jsonData[0].NT_TargetUser +'&Select=Publish&PageNumber=1');
-      NTTopic.setAttribute('style', 'text-decoration:none;');
-      NTTopic.innerText = jsonData[0].NT_TargetUser
+        var NTDefualt = document.createElement('span');
+        if (jsonData[i].NT_Sign == 'RollCallPublish'){
+          NTDefualt.innerText = '  点您名了  ';
+        }else{
+          NTDefualt.innerText = '  回复了您  ';
+        }
+        
+        var NTTopic = document.createElement('a');
+        NTTopic.setAttribute('href', "javascript:RemoveNotificationInfo('one',"+ "'" +jsonData[i].NT_ID + "','/"+ jsonData[i].NT_URL +'?Part='+ jsonData[i].NT_Part +'&FilterWord='+ jsonData[i].NT_KeyID +"&PageNumber=1')");
+        NTTopic.setAttribute('style', 'text-decoration:none;');
+        NTTopic.setAttribute('title', jsonData[i].NT_Title);
+        NTTopic.innerText = jsonData[i].NT_Title;
 
+        NTDiv.appendChild(NTUser);
+        NTDiv.appendChild(NTDefualt);
+        NTDiv.appendChild(NTTopic);
+
+        PushNotificationslist.appendChild(NTDiv);
+
+      }
     }
   })
 }
 
-function RemoveNotificationInfo(){
-  $.get('/RemoveNotificationInfo/',{},function(returndata){
-    alert(returndata);
-  })
+
+function RemoveNotificationInfo(method,ntid,url){
+  if (method == 'one'){
+    window.location.href=url;
+    $.post('/RemoveNotificationInfo/',{'NT_ID':ntid})
+  }else{
+    var NT_ID_Array = [];
+    var PushNotificationslist = document.getElementById('PushNotifications-list');
+    while(PushNotificationslist.hasChildNodes()){
+      if (PushNotificationslist.firstChild.getAttribute('id')){
+        NT_ID_Array.push(PushNotificationslist.firstChild.getAttribute('id'));
+        PushNotificationslist.removeChild(PushNotificationslist.firstChild);
+      }else{
+        PushNotificationslist.removeChild(PushNotificationslist.firstChild);
+      }
+    }
+    NT_ID = NT_ID_Array.join(',');
+    $.post('/RemoveNotificationInfo/',{'NT_ID':NT_ID});
+    location.reload();
+  }
+
 }
 
 function CommentConversation(url,csrftoken,ObjectID,replayuser,replayeduser,from){
