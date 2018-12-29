@@ -89,24 +89,24 @@
                                 </svg>
                             </span>
                             {% ifnotequal NotificationCount '0' %}
-                            <span style="position:absolute;margin:-5px 10px;color:#fff;font-size:12px;background-color:#FABCBA;border:2px solid #fff;border-radius:30px;width:20px;text-shadow:1px 1px 2px #000;">{{NotificationCount}}</span>
+                            <span id="NotificationCount" style="position:absolute;margin:-5px 10px;color:#fff;font-size:12px;background-color:#FABCBA;border:2px solid #fff;border-radius:30px;width:20px;text-shadow:1px 1px 2px #F1303C;">{{NotificationCount}}</span>
                             {% endifnotequal %}
                         </button>
                         <button title="消息栏" style="margin: -19px 70px 0px 0px;position:relative;" type="button" class="AppHeader-fakeButton Button--plain Button--withIcon Button--iconOnly" data-toggle='modal' data-target="#BulletinBoard">
                             <span style="align-items: center;position:absolute; margin:0xp 0px 0px 0px;">
-                                <svg fill="#8590A6" viewBox="0 0 38 38" width="1.2em" height="1.2em">
+                                <svg fill="#8590A6" viewBox="0 2 35 35" width="1.2em" height="1.2em">
                                     <g>
                                         <path d="M31.924 18.455l-4.002-15.006c-0.242-0.853-1.033-1.449-1.922-1.449h-20c-0.89 0-1.68 0.596-1.922 1.449l-4.002 15.006c-0.051 0.182-0.076 0.365-0.076 0.545v7c0 2.209 1.791 4 4 4h24c2.209 0 4-1.791 4-4v-7c0-0.18-0.025-0.363-0.076-0.545zM30 26c0 1.102-0.898 2-2 2h-24c-1.103 0-2-0.898-2-2v-7l4.001-15.001h19.997l4.002 15.001v7zM23.742 6h-15.484c-0.453 0-0.85 0.305-0.967 0.743l-3.445 12c-0.079 0.301-0.016 0.621 0.174 0.867s0.482 0.39 0.792 0.39h4.568l1.447 2.895c0.34 0.677 1.032 1.105 1.79 1.105h6.766c0.758 0 1.449-0.428 1.789-1.105l1.447-2.895h4.568c0.311 0 0.604-0.145 0.793-0.391s0.252-0.566 0.174-0.867l-3.445-12c-0.117-0.438-0.514-0.742-0.967-0.742zM24.281 18h-1.662c-0.762 0-1.447 0.422-1.789 1.105l-1.447 2.895h-6.766l-1.447-2.895c-0.342-0.683-1.027-1.105-1.789-1.105h-4.047l2.924-11h15.484l2.924 11h-2.385z" fill-rule="evenodd"></path>
                                     </g>
                                 </svg>
                             </span>
-                            <span style="position:absolute;margin:-7px 10px;color:#fff;font-size:12px;background-color:#FABCBA;border:2px solid #fff;border-radius:30px;width:20px;text-shadow:1px 1px 2px #000;">1</span>
+                            <span style="position:absolute;margin:-7px 10px;color:#fff;font-size:12px;background-color:#FABCBA;border:2px solid #fff;border-radius:30px;width:20px;text-shadow:1px 1px 2px #F1303C;">1</span>
                         </button>
                         {% if request.user.is_authenticated %}
                         <img title="{{request.user.UT_Nick}}" src="{{request.user.UT_Avatar}}" height="32" width="32" style="cursor:pointer;-webkit-border-radius: 16px;" onclick="javascript:window.location.href='/UserProfile?UserNickName={{request.user.UT_Nick}}&Select=Publish&PageNumber=1'">
                         <button title="注销" style="margin: 19px 0px 0px 44px;" id='logoutbutton' type="button" class="AppHeader-fakeButton Button--plain Button--withIcon Button--iconOnly" onclick="javascript:Logout('/logout/');">
                             <span style="display: inline-flex; align-items: center;">
-                                <svg fill="#0077E6" viewBox="0 0 40 40" width='35' height='35'>
+                                <svg fill="#8590A6" viewBox="0 0 40 40" width='35' height='35'>
                                     <g>
                                         <path d="M22 15.453v4.047c0 2.484-2.016 4.5-4.5 4.5h-13c-2.484 0-4.5-2.016-4.5-4.5v-13c0-2.484 2.016-4.5 4.5-4.5h3.984c0.266 0 0.5 0.219 0.5 0.5 0 0.25-0.172 0.453-0.406 0.5-0.781 0.266-1.484 0.578-2.078 0.938-0.078 0.031-0.156 0.063-0.25 0.063h-1.75c-1.375 0-2.5 1.125-2.5 2.5v13c0 1.375 1.125 2.5 2.5 2.5h13c1.375 0 2.5-1.125 2.5-2.5v-3.344c0-0.187 0.109-0.359 0.281-0.453 0.313-0.141 0.594-0.344 0.844-0.578 0.141-0.141 0.359-0.203 0.547-0.125s0.328 0.25 0.328 0.453zM25.703 7.703l-6 6c-0.187 0.203-0.438 0.297-0.703 0.297-0.125 0-0.266-0.031-0.391-0.078-0.359-0.156-0.609-0.516-0.609-0.922v-3h-2.5c-3.437 0-5.625 0.656-6.844 2.047-1.266 1.453-1.641 3.797-1.156 7.391 0.031 0.219-0.109 0.438-0.313 0.531-0.063 0.016-0.125 0.031-0.187 0.031-0.156 0-0.313-0.078-0.406-0.203-0.109-0.156-2.594-3.672-2.594-6.797 0-4.188 1.313-9 11.5-9h2.5v-3c0-0.406 0.25-0.766 0.609-0.922 0.125-0.047 0.266-0.078 0.391-0.078 0.266 0 0.516 0.109 0.703 0.297l6 6c0.391 0.391 0.391 1.016 0 1.406z" fill-rule="evenodd"></path>
                                     </g>

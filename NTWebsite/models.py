@@ -28,6 +28,10 @@ class ConfigParams(models.Model):
         max_length=16, blank=False, verbose_name='加密偏移量')
     CP_TopicsPageLimit = models.IntegerField(
         default=10, blank=False, verbose_name='每页文章数量')
+    CP_SpecialTopicsPageLimit = models.IntegerField(
+        default=10, blank=False, verbose_name='每页专题数量')
+    CP_RollCallsPageLimit = models.IntegerField(
+        default=10, blank=False, verbose_name='每页点名数量')
     CP_CommentsPageLimit = models.IntegerField(
         default=10, blank=False, verbose_name='每页评论数量')
     CP_AvatarResolution = models.IntegerField(
@@ -470,6 +474,8 @@ class NotificationTable(models.Model):
         primary_key=True, auto_created=True, default=uuid.uuid4, verbose_name='通知ID')
     NT_KeyID = models.CharField(
         max_length=100, blank=False, default='', verbose_name='关键ID')
+    NT_AnchorID = models.CharField(
+        max_length=100, blank=False, default='', verbose_name='定位ID')
     NT_Title = models.CharField(
         max_length=100, blank=False, default='', verbose_name='标题')
     NT_URL = models.CharField(max_length=30, blank=False, verbose_name='URL')

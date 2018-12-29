@@ -74,6 +74,8 @@ def GetConfig():
     config['CommentsLimit'] = ConfigObject.CP_CommentsLimit
     config['CommentsPageLimit'] = ConfigObject.CP_CommentsPageLimit
     config['AvatarResolution'] = ConfigObject.CP_AvatarResolution
+    config['SpecialTopicsPageLimit'] = ConfigObject.CP_SpecialTopicsPageLimit
+    config['RollCallsPageLimit'] = ConfigObject.CP_RollCallsPageLimit
     return config
 
 if __name__ == "__main__":

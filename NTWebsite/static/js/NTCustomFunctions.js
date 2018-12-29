@@ -29,7 +29,7 @@
         }
         
         var NTTopic = document.createElement('a');
-        NTTopic.setAttribute('href', "javascript:RemoveNotificationInfo('one',"+ "'" +jsonData[i].NT_ID + "','/"+ jsonData[i].NT_URL +'?Part='+ jsonData[i].NT_Part +'&FilterWord='+ jsonData[i].NT_KeyID +"&PageNumber=1')");
+        NTTopic.setAttribute('href', "javascript:RemoveNotificationInfo('one',"+ "'" +jsonData[i].NT_ID + "','/"+ jsonData[i].NT_URL +'?Part='+ jsonData[i].NT_Part +'&FilterWord='+ jsonData[i].NT_KeyID +"&PageNumber=" + jsonData[i].NT_PageNumber + "#" + jsonData[i].NT_AnchorID + "')");
         NTTopic.setAttribute('style', 'text-decoration:none;');
         NTTopic.setAttribute('title', jsonData[i].NT_Title);
         NTTopic.innerText = jsonData[i].NT_Title;
@@ -49,7 +49,13 @@
 function RemoveNotificationInfo(method,ntid,url){
   if (method == 'one'){
     window.location.href=url;
-    $.post('/RemoveNotificationInfo/',{'NT_ID':ntid})
+    var NotificationCountNode = document.getElementById('NotificationCount');
+    if (NotificationCountNode){
+      NotificationCountNode.parentNode.removeChild(NotificationCountNode);
+    }
+    document.getElementById('PushNotificationsClose').click();
+    $.post('/RemoveNotificationInfo/',{'NT_ID':ntid});
+    TickDiv(url.split('#')[1],'padding:18px 20px 18px 20px;margin-bottom:6px;border:2px solid  #FABCBA;');
   }else{
     var NT_ID_Array = [];
     var PushNotificationslist = document.getElementById('PushNotifications-list');
@@ -65,7 +71,11 @@ function RemoveNotificationInfo(method,ntid,url){
     $.post('/RemoveNotificationInfo/',{'NT_ID':NT_ID});
     location.reload();
   }
+}
 
+function TickDiv(id,style){
+  $('html, body').animate({scrollTop: $(id).offset().top}, 1000);
+  document.getElementById(id).setAttribute('style', style);
 }
 
 function CommentConversation(url,csrftoken,ObjectID,replayuser,replayeduser,from){
