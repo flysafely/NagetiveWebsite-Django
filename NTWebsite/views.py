@@ -35,7 +35,8 @@ CommentUserLikesOrDislikesTable,\
 ArticleReadsIP,\
 User,\
 CategoryInfo,\
-ArticleComment
+ArticleComment,\
+BlackList
 
 import sys
 import os

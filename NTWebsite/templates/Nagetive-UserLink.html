@@ -57,9 +57,11 @@
                     </div>
                 </div>
             </div>
+            {% if not selforguest.0 == 'readonly' %}
             <div style="display:inline-block;margin:0px 0px 0px 0px;">
                 <button id='LinkButton' class="Button Button--blue" style="position:absolute;top:50%;transform:translate(-20%,-50%);width:80px;margin:0px 0px 0px 0px;font-size:13px;" onclick="javascript:alert('功能未开放!')">拉黑</button>
             </div>
+            {% endif %}
             
         </div>      
         {% endfor %}

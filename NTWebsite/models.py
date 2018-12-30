@@ -494,3 +494,21 @@ class NotificationTable(models.Model):
 
     def __str__(self):
         return str(self.NT_ID)
+
+
+class BlackList(models.Model):
+    """docstring for blacklist"""
+
+    BL_ID = models.UUIDField(
+        primary_key=True, auto_created=True, default=uuid.uuid4, verbose_name='黑名单ID')
+    BL_User = models.ForeignKey(
+        User, to_field='username', related_name='BL_User',on_delete=models.CASCADE, verbose_name='被添加用户')
+    BL_Handler = models.ForeignKey(
+        User, to_field='username',related_name='BL_Handler', on_delete=models.CASCADE, verbose_name='操作用户')
+
+    class Meta:
+        # 末尾不加s
+        verbose_name_plural = '**6**通知信息**6**'
+
+    def __str__(self):
+        return str(self.BL_User.UT_Nick)
