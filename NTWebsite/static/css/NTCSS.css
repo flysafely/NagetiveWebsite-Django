@@ -9,6 +9,12 @@
     border:1px solid #C0C0C0;
     box-shadow:0.1px 0.1px 0.5px #C0C0C0;
 }
+
+.TopicCommentItem
+{
+    padding:18px 20px 18px 20px;
+    margin-bottom:6px;
+}
 .replaybox
 {
     height:35px; 

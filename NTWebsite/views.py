@@ -934,11 +934,11 @@ def GetNotificationInfoPageNum(part,keyid,anchorid):
         Number = 0
         for ArticleCommentObject in ArticleCommentObjects:
             Number += 1
-            print(type(ArticleCommentObject.AC_ID),ArticleCommentObject.AC_ID,anchorid)
+            #print(type(ArticleCommentObject.AC_ID),ArticleCommentObject.AC_ID,anchorid)
             if str(ArticleCommentObject.AC_ID) == anchorid:
-                print('break!!!!!!!')
+                #print('break!!!!!!!')
                 break
-        PageNumber = (Number // ConfigData['CommentsPageLimit']) + 1
+        PageNumber = Number // ConfigData['CommentsPageLimit'] if Number%ConfigData['CommentsPageLimit'] == 0 else Number // ConfigData['CommentsPageLimit'] + 1
         print('Number:%d,PageNumber:%d' % (Number,PageNumber))
         return str(PageNumber)
     elif part == 'SpecialTopicContent':
@@ -948,7 +948,7 @@ def GetNotificationInfoPageNum(part,keyid,anchorid):
             Number += 1
             if str(SpecialTopicCommentObject.STC_ID) == anchorid:
                 break
-        PageNumber = (Number // ConfigData['SpecialTopicsPageLimit']) + 1
+        PageNumber = Number // ConfigData['SpecialTopicsPageLimit'] if Number%ConfigData['SpecialTopicsPageLimit'] == 0 else Number // ConfigData['SpecialTopicsPageLimit'] + 1
         return str(PageNumber)
     else:
         return '1'
