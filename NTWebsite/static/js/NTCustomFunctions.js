@@ -1,4 +1,8 @@
-﻿function GetNotificationInfo(){
+﻿function AddToBlackList(nickname){
+  $.post('/AddToBlackList/',{csrfmiddlewaretoken: csrftoken,'UT_Nick':nickname},function(status){})
+}
+
+function GetNotificationInfo(){
   var PushNotificationslist = document.getElementById('PushNotifications-list');
   if(PushNotificationslist){
     while(PushNotificationslist.hasChildNodes()){

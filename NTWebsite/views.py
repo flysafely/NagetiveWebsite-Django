@@ -954,6 +954,11 @@ def GetNotificationInfoPageNum(part,keyid,anchorid):
     else:
         return '1'
 
+
+def AddToBlackList():
+    pass
+
+
 def GetTemplate(templateName):
 
     # 读取card模板html信息
