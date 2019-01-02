@@ -14,6 +14,11 @@
     {% load static %}
     <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
     <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+
+    <script type="text/javascript">
+        // 不要括号
+        window.onload = TickDiv;
+    </script>
 </head>
 <body>
     {% include "Nagetive-ModalWindows.html" %}

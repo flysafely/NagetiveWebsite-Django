@@ -29,8 +29,12 @@
             </span>
             {% elif selforguest.0 == 'readonly' and selforguest.4 == 'linked' %}
             <span>
-                <button id='LinkButton' class="Button Button--blue" style="width:80px;margin:0px 0px 0px 0px;font-size:13px;" onclick="javascript:UserLink('/UserLink/','{{ csrf_token }}','{{export_userinfo.UT_Nick}}')">取关</button>
+                <button id='LinkButton' class="Button Button--blue" style="width:90px;margin:0px 0px 0px 0px;font-size:13px;" onclick="javascript:UserLink('/UserLink/','{{ csrf_token }}','{{export_userinfo.UT_Nick}}')">取消关注</button>
             </span>
+            {% elif selforguest.0 == 'readonly' and selforguest.4 == 'blocked' %} 
+            <span>
+                <button id='LinkButton' class="Button Button--blue" style="width:90px;margin:0px 0px 0px 0px;font-size:13px;" onclick="javascript:BlackListOperation('delete','{{export_userinfo.UT_Nick}}','{{ csrf_token }}')">取消拉黑</button>
+            </span>                       
             {% endif %}
             <div>
                 <input id='UserProfileDescription' type="text" style="border:none;width:450px;" {{ selforguest.0 }} placeholder="简介" value="{{export_userinfo.UT_Description}}">

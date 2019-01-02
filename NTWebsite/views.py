@@ -35,7 +35,8 @@ CommentUserLikesOrDislikesTable,\
 ArticleReadsIP,\
 User,\
 CategoryInfo,\
-ArticleComment
+ArticleComment,\
+BlackList
 
 import sys
 import os
@@ -409,11 +410,19 @@ def Link(request):
             UserNickName = request.POST.get('UserNickName')
             userObject = User.objects.get(UT_Nick=UserNickName)
             if not UserLink.objects.filter(UL_UserBeLinked=userObject.username, UL_UserLinking=request.user):
-                UserLink.objects.create(
-                    UL_UserBeLinked=userObject, UL_UserLinking=request.user)
-                UserInfoOperation(request.user.username,'UT_FoucusCount','+=1')
-                UserInfoOperation(userObject.username,'UT_FansCount','+=1')
-                return HttpResponse('link')
+                if not BlackList.objects.filter(BL_User=request.user,BL_Handler=userObject):
+                    BlackListDeleteObject = BlackList.objects.filter(BL_User=userObject,BL_Handler=request.user)
+                    if BlackListDeleteObject:
+                        BlackListDeleteObject[0].delete()
+                        return HttpResponse('blockcancel')
+                    else:
+                        UserLink.objects.create(
+                            UL_UserBeLinked=userObject, UL_UserLinking=request.user)
+                        UserInfoOperation(request.user.username,'UT_FoucusCount','+=1')
+                        UserInfoOperation(userObject.username,'UT_FansCount','+=1')
+                        return HttpResponse('link')
+                else:
+                    return HttpResponse('block')
             else:
                 UserLink.objects.filter(
                     UL_UserBeLinked=userObject, UL_UserLinking=request.user)[0].delete()
@@ -473,6 +482,9 @@ def UserProfile(request):
             if UserLink.objects.filter(UL_UserBeLinked=User.objects.get(UT_Nick=usernickname).username, UL_UserLinking=request.user):
                 status = ('readonly', 'disabled',
                           'hidden', 'selected', 'linked', 'UserProfile')
+            elif BlackList.objects.filter(BL_User=User.objects.get(UT_Nick=usernickname),BL_Handler=request.user):
+                status = ('readonly', 'disabled',
+                          'hidden', 'selected', 'blocked', 'UserProfile')                
             else:
                 status = ('readonly', 'disabled', 'hidden',
                           'selected', 'link', 'UserProfile')
@@ -929,16 +941,13 @@ def GetNotificationCount(requestObject):
 def GetNotificationInfoPageNum(part,keyid,anchorid):
     ConfigData = mMs.GetConfig()
     if part == 'Content':
-        #ArticleObject = TopicArticleStatistic.objects.get(TAS_ID=keyid)
         ArticleCommentObjects = list(ArticleComment.objects.filter(AC_ArticleID=TopicArticleStatistic.objects.get(TAS_ID=keyid)).order_by('-AC_EditDate'))
         Number = 0
         for ArticleCommentObject in ArticleCommentObjects:
             Number += 1
-            print(type(ArticleCommentObject.AC_ID),ArticleCommentObject.AC_ID,anchorid)
             if str(ArticleCommentObject.AC_ID) == anchorid:
-                print('break!!!!!!!')
                 break
-        PageNumber = (Number // ConfigData['CommentsPageLimit']) + 1
+        PageNumber = Number // ConfigData['CommentsPageLimit'] if Number%ConfigData['CommentsPageLimit'] == 0 else Number // ConfigData['CommentsPageLimit'] + 1
         print('Number:%d,PageNumber:%d' % (Number,PageNumber))
         return str(PageNumber)
     elif part == 'SpecialTopicContent':
@@ -948,10 +957,44 @@ def GetNotificationInfoPageNum(part,keyid,anchorid):
             Number += 1
             if str(SpecialTopicCommentObject.STC_ID) == anchorid:
                 break
-        PageNumber = (Number // ConfigData['SpecialTopicsPageLimit']) + 1
+        PageNumber = Number // ConfigData['SpecialTopicsPageLimit'] if Number%ConfigData['SpecialTopicsPageLimit'] == 0 else Number // ConfigData['SpecialTopicsPageLimit'] + 1
         return str(PageNumber)
     else:
         return '1'
+
+
+def BlackListOperation(request):
+    if request.method == 'POST':
+        UserNcik = request.POST.get('UserNick')
+        Operation = request.POST.get('Operation')
+        UserNcikObject = User.objects.get(UT_Nick=UserNcik)
+        if request.user.is_authenticated and Operation == 'add':
+            BlackObject = BlackList.objects.filter(BL_User=UserNcikObject,BL_Handler=request.user)
+            if not BlackObject:
+                try:
+                    BlackList.objects.create(BL_User=UserNcikObject,BL_Handler=request.user)
+                    UserLinkObject = UserLink.objects.get(UL_UserBeLinked=request.user,UL_UserLinking=UserNcikObject)
+                    if UserLinkObject:
+
+                        UserLinkObject.delete()
+                        return HttpResponse('已拉黑')
+                except Exception as e:
+                    return HttpResponse(e)
+            else:
+                return HttpResponse('addfail')
+        elif request.user.is_authenticated and Operation == 'delete':
+            BlackObject = BlackList.objects.filter(BL_User=UserNcikObject,BL_Handler=request.user)
+            if BlackObject:
+                try:
+                    BlackList.objects.get(BL_User=UserNcikObject,BL_Handler=request.user).delete()
+                    return HttpResponse('已取消拉黑')
+                except Exception as e:
+                    return HttpResponse(e)
+            else:
+                return HttpResponse('blockcancelfail')            
+        else:
+            return HttpResponse('login')
+
 
 def GetTemplate(templateName):
 
