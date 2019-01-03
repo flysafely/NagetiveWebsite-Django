@@ -1,49 +1,5 @@
-# from django.contrib.auth.models import User
-from django.contrib import auth
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.hashers import make_password, check_password
-from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response, render
-from django.template import Template, Context, RequestContext
-from django.forms.models import model_to_dict
-from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q
-
-from PIL import Image as im
-from NTConfig import settings
-
-from NTWebsite import MainMethods as mMs
-from NTWebsite import AppConfig as aConf
-from NTWebsite.models import \
-NotificationTable,\
-RecommendAuthor,\
-SpecialTopicComment,\
-SpecialTopicReadsIP,\
-SpecialTopicFollow,\
-SpecialTopicInfo,\
-UserCircuseeCollect,\
-RollCallReadsIP,\
-RollCallDialogue,\
-RollCallInfo,\
-UserCollect,\
-UserLink,\
-TopicArticleStatistic,\
-ArticleUserLikesOrDislikesTable,\
-CommentUserLikesOrDislikesTable,\
-ArticleReadsIP,\
-User,\
-CategoryInfo,\
-ArticleComment,\
-BlackList
-
-import sys
-import os
-import base64
-import uuid
-import time
-import json
+from .improtFiles.views_import_head import *
+from .models import *
 
 def UserInfoOperation(UserName,field,method):
     UserObject = User.objects.get(username=UserName)
@@ -76,7 +32,6 @@ def CommentConversation(request):
         CommentsObject = list(CommentsObjectReplayUser) + list(CommentsObjectReplayedUser)
         
         for CommentObject in CommentsObject:
-            #print(CommentObject)
             if eval("CommentObject.%s_Parent != ''" % (KeyWord[From][2])): 
                 if eval('%sComment.objects.get(%s_ID=CommentObject.%s_Parent).%s_UserNickName == ReplayedUser' % 
                     (From,KeyWord[From][2],KeyWord[From][2],KeyWord[From][2])) and eval("CommentObject.%s_UserNickName == ReplayUser" % (KeyWord[From][2])):
@@ -202,6 +157,7 @@ def Circusee(request):
         else:
             return HttpResponse('login')
 
+#@cache_page(60)
 def RollCallSquareInfoGet(request):
     if request.method == 'GET':
         ConfigData = mMs.GetConfig()
@@ -312,11 +268,12 @@ def RollCallPublish(request):
                     NewRollCall = RollCallInfo.objects.create(RCI_Title=RollCallTitle,RCI_Publisher=Publisher,RCI_Target=TargetUser)
                     NewDialogue = RollCallDialogue.objects.create(RCD_ID=NewRollCall,RCD_Query=RollCallContent)
 
-                    AddToNotificationTable(NewRollCall.RCI_Title,'RollCallSquare','RollCallContent','RollCallPublish',NewRollCall.RCI_ID,TargetUser,request.user)
+                    AddToNotificationTable("",NewRollCall.RCI_Title,'RollCallSquare','RollCallContent','RollCallPublish',NewRollCall.RCI_ID,TargetUser,request.user)
                     UserInfoOperation(request.user.username,'UT_RollCallsCount','+=1')
                     return HttpResponse('publishok')
                 except Exception as e:
-                    return HttpResponse(e)
+                    if 'UNIQUE' in e:
+                        return HttpResponse('titleisexisted')
             else:
 
                 return HttpResponse("用户:'"+RollCallUserNick +"'"+ '不存在!')
@@ -536,11 +493,9 @@ def UserProfile(request):
         elif PartSelection == 'Focuslist':
             export_type = 'Linking'
             ObjectList_Treated = ObjectList
-            #print('Focuslist',ObjectPaged)
         elif PartSelection == 'Fanslist':
             export_type = 'Linked'
             ObjectList_Treated = ObjectList
-            #print('Fanslist',ObjectPaged)
         # 间接获取文章对象
         elif PartSelection in ['Likes','Dislikes','Collect']:
             export_type = 'Topic'
@@ -593,7 +548,6 @@ def TopicsInfoGet(request):
 
 
         NotificationCount = GetNotificationCount(request)
-        #print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',NotificationCount)
         Query_condition = aConf.Section_Map_Field[Part]
         TopicsInfoList = GetContextData(Query_condition['TableName'],
                                         Query_condition['JudgementCondition'] + str(
@@ -892,7 +846,6 @@ def GetNotificationInfo(request):
                         dataDict['NT_Sign'] = Object.NT_Sign
                         dataDict['NT_SourceUser'] = Object.NT_SourceUser.UT_Nick
                         dataList.append(dataDict)
-                    #print(dataList)
                     jsondata = json.dumps(dataList,ensure_ascii=False)
                     return HttpResponse(jsondata)
                 else:
@@ -948,7 +901,6 @@ def GetNotificationInfoPageNum(part,keyid,anchorid):
             if str(ArticleCommentObject.AC_ID) == anchorid:
                 break
         PageNumber = Number // ConfigData['CommentsPageLimit'] if Number%ConfigData['CommentsPageLimit'] == 0 else Number // ConfigData['CommentsPageLimit'] + 1
-        print('Number:%d,PageNumber:%d' % (Number,PageNumber))
         return str(PageNumber)
     elif part == 'SpecialTopicContent':
         SpecialTopicCommentObjects = list(SpecialTopicComment.objects.filter(STC_SpecialTopicID=SpecialTopicInfo.objects.get(STI_ID=keyid)).order_by('-STC_EditDate'))
@@ -1008,8 +960,8 @@ def GetContextData(TableName, *conditions, **others):
     # 关于查询数据库的性能优化:https://www.jb51.net/article/124433.htm
     # print("%s.objects.filter(%s%s'%s').order_by('%s')[0:aConf.IndexCardLimit]" % (
     #    TableName, field, Judgement, conditions, others['orderby']))
-    print('**************************', "%s.objects.filter(%s)%s[0:%s]" % (
-        TableName, ','.join(conditions), others['operations'], others['limit']))
+    #print('**************************', "%s.objects.filter(%s)%s[0:%s]" % (
+    #    TableName, ','.join(conditions), others['operations'], others['limit']))
     return eval("%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']))
 
 # 上传头像处理存储

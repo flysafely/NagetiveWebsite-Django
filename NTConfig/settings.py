@@ -25,7 +25,7 @@ SECRET_KEY = '$@&+60oqu5u900a+1*qo*!5nn#ljd3lj=3%p@#dmw%=mle$+_x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.102', '192.168.1.100', '192.168.3.47','192.168.3.13',
+ALLOWED_HOSTS = ['192.168.1.102', '192.168.1.100', '192.168.3.47', '192.168.3.13',
                  '127.0.0.1', 'www.nagetive.com', 'www.nagetives.com']
 
 
@@ -73,6 +73,17 @@ TEMPLATES = [
         },
     },
 ]
+'''
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://:q63785095@127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        }
+    }
+}
+'''
 
 WSGI_APPLICATION = 'NTConfig.wsgi.application'
 

@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 import uuid
 
-
+'''
 class ConfigParams(models.Model):
     """docstring for ConfigParams"""
 
@@ -39,8 +39,9 @@ class ConfigParams(models.Model):
 
     class Meta:
         # 末尾不加s
+        verbose_name = '配置参数'
         verbose_name_plural = '*****配置参数*****'
-        pass
+        #app_label = "配置表"
 
     def __str__(self):
         return self.CP_Name
@@ -51,10 +52,12 @@ class PreferredConfigName(models.Model):
         ConfigParams, to_field='CP_Name', on_delete=models.CASCADE, verbose_name='首选配置名称')
 
     class Meta:
+        verbose_name = '首选配置'
         # 末尾不加s
+
         verbose_name_plural = '*****首选配置设置*****'
         pass
-
+'''
 
 # 用户信息表
 class User(AbstractUser):
@@ -83,6 +86,7 @@ class User(AbstractUser):
     UT_SreplayCount = models.IntegerField(verbose_name='专题评论数量', default=0)
 
     class Meta(AbstractUser.Meta):
+        verbose_name = '用户'
         # 末尾不加s
         #verbose_name_plural = '用户'
         pass
@@ -101,6 +105,7 @@ class TopicArticleTheme(models.Model):
         max_length=10, unique=True, verbose_name='主题名称')
 
     class Meta:
+        verbose_name = '文章'
         # 末尾不加s
         verbose_name_plural = '**1**文章主题**1**'
 
@@ -116,6 +121,7 @@ class CategoryInfo(models.Model):
     CI_SVG = models.TextField(max_length=1000, verbose_name='图标SVG')
 
     class Meta:
+        verbose_name = '类目'
         # 末尾不加s
         verbose_name_plural = '**1**来自类目**1**'
 
@@ -149,6 +155,7 @@ class TopicArticleStatistic(models.Model):
         null=True, blank=True, config_name='admin', verbose_name='文章正文')
 
     class Meta:
+        verbose_name = '文章信息'
         # 末尾不加s
         verbose_name_plural = '**1**文章基础信息**1**'
 
@@ -166,6 +173,7 @@ class ArticleTags(models.Model):
     AT_Name = models.CharField(max_length=10, verbose_name='标签名称')
 
     class Meta:
+        verbose_name = '标签'
         # 末尾不加s
         verbose_name_plural = '**1**文章标签**1**'
 
@@ -197,6 +205,7 @@ class ArticleComment(models.Model):
         max_length=1, default="N", choices=Readstatus, verbose_name='是否阅读')
 
     class Meta:
+        verbose_name = '评论'
         # 末尾不加s
         verbose_name_plural = '**1**文章评论**1**'
 
@@ -218,6 +227,7 @@ class ArticleUserLikesOrDislikesTable(models.Model):
         TopicArticleStatistic, to_field='TAS_Title', on_delete=models.CASCADE, verbose_name='文章ID')
 
     class Meta:
+        verbose_name = '立场记录'
         # 末尾不加s
         verbose_name_plural = '**1**文章立场统计**1**'
 
@@ -236,6 +246,7 @@ class CommentUserLikesOrDislikesTable(models.Model):
         ArticleComment, to_field='AC_ID', on_delete=models.CASCADE, verbose_name='评论ID')
 
     class Meta:
+        verbose_name = '评论立场记录'
         # 末尾不加s
         verbose_name_plural = '**1**评论立场统计**1**'
 
@@ -253,6 +264,7 @@ class ArticleReadsIP(models.Model):
         TopicArticleStatistic, to_field='TAS_Title', on_delete=models.CASCADE, verbose_name='文章ID')
 
     class Meta:
+        verbose_name = '阅读IP记录'
         # 末尾不加s
         verbose_name_plural = '**1**文章阅读IP统计**1**'
 
@@ -271,7 +283,7 @@ class UserLink(models.Model):
     UL_LinkTime = models.DateField(auto_now=True, verbose_name='时间')
 
     class Meta:
-
+        verbose_name = '关注信息'
         verbose_name_plural = '**4**用户关注信息**4**'
 
 
@@ -284,6 +296,7 @@ class UserCollect(models.Model):
     UC_CollectTime = models.DateField(auto_now=True, verbose_name='时间')
 
     class Meta:
+        verbose_name = '文章收藏'
         verbose_name_plural = '**1**文章用户收藏**1**'
 
 
@@ -306,6 +319,7 @@ class RollCallInfo(models.Model):
         default=0, blank=False, verbose_name='点名阅读量')
 
     class Meta:
+        verbose_name = '点名信息'
         # 末尾不加s
         verbose_name_plural = '**2**点名基础信息**2**'
         pass
@@ -324,6 +338,7 @@ class RollCallDialogue(models.Model):
         max_length=30, default='', blank=False, verbose_name='回复内容')
 
     class Meta:
+        verbose_name = '对话记录'
         # 末尾不加s
         verbose_name_plural = '**2**点名对话明细**2**'
         pass
@@ -343,6 +358,7 @@ class RollCallReadsIP(models.Model):
         RollCallInfo, to_field='RCI_Title', on_delete=models.CASCADE, verbose_name='围观ID')
 
     class Meta:
+        verbose_name = 'IP记录'
         # 末尾不加s
         verbose_name_plural = '**2**围观IP统计**2**'
 
@@ -358,6 +374,7 @@ class UserCircuseeCollect(models.Model):
     UCC_CollectTime = models.DateField(auto_now=True, verbose_name='时间')
 
     class Meta:
+        verbose_name = '围观'
         verbose_name_plural = '**2**用户围观**2**'
 
 
@@ -388,6 +405,7 @@ class SpecialTopicInfo(models.Model):
     STI_Comment = models.IntegerField(verbose_name='评论数', default=0)
 
     class Meta:
+        verbose_name = '专题'
         # 末尾不加s
         verbose_name_plural = '**3**专题信息**3**'
         pass
@@ -404,6 +422,7 @@ class SpecialTopicFollow(models.Model):
     STF_CollectTime = models.DateField(auto_now=True, verbose_name='时间')
 
     class Meta:
+        verbose_name = '关注'
         verbose_name_plural = '**3**专题关注**3**'
 
 
@@ -418,6 +437,7 @@ class SpecialTopicReadsIP(models.Model):
         SpecialTopicInfo, to_field='STI_ID', on_delete=models.CASCADE, verbose_name='专题ID')
 
     class Meta:
+        verbose_name = 'IP记录'
         # 末尾不加s
         verbose_name_plural = '**3**专题阅读IP统计**3**'
 
@@ -447,6 +467,7 @@ class SpecialTopicComment(models.Model):
         max_length=1, default="N", choices=Readstatus, verbose_name='是否阅读')
 
     class Meta:
+        verbose_name = '评论'
         # 末尾不加s
         verbose_name_plural = '**3**专题评论**3**'
 
@@ -461,6 +482,7 @@ class RecommendAuthor(models.Model):
         default=0, blank=False, verbose_name='顺序')
 
     class Meta:
+        verbose_name = '用户'
         # 末尾不加s
         verbose_name_plural = '**1**推荐用户**1**'
 
@@ -489,6 +511,7 @@ class NotificationTable(models.Model):
         User, to_field='username', related_name='TargetUser', on_delete=models.CASCADE, verbose_name='被通知者')
 
     class Meta:
+        verbose_name = '信息'
         # 末尾不加s
         verbose_name_plural = '**4**通知信息**4**'
 
@@ -502,11 +525,12 @@ class BlackList(models.Model):
     BL_ID = models.UUIDField(
         primary_key=True, auto_created=True, default=uuid.uuid4, verbose_name='黑名单ID')
     BL_User = models.ForeignKey(
-        User, to_field='username', related_name='BL_User',on_delete=models.CASCADE, verbose_name='被添加用户')
+        User, to_field='username', related_name='BL_User', on_delete=models.CASCADE, verbose_name='被添加用户')
     BL_Handler = models.ForeignKey(
-        User, to_field='username',related_name='BL_Handler', on_delete=models.CASCADE, verbose_name='操作用户')
+        User, to_field='username', related_name='BL_Handler', on_delete=models.CASCADE, verbose_name='操作用户')
 
     class Meta:
+        verbose_name = '记录'
         # 末尾不加s
         verbose_name_plural = '**6**黑名单**6**'
 

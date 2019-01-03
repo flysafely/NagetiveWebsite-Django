@@ -4,8 +4,9 @@ import datetime
 import hashlib
 import base64
 from oscrypto._win import symmetric
-from NTWebsite.models import PreferredConfigName, ConfigParams
+from NTWebsite.models.Configuration import *
 import os
+
 
 def GetStringFromHtml(HtmlPath, filename, EncodeType="utf-8"):
     path = os.path.join(HtmlPath, filename)
@@ -63,6 +64,7 @@ def GetUserIP(request):
 
         return request.META['REMOTE_ADDR']
 
+
 def GetConfig():
     config = {}
     ConfigName = PreferredConfigName.objects.all()[0].PC_Name.CP_Name
@@ -77,6 +79,7 @@ def GetConfig():
     config['SpecialTopicsPageLimit'] = ConfigObject.CP_SpecialTopicsPageLimit
     config['RollCallsPageLimit'] = ConfigObject.CP_RollCallsPageLimit
     return config
+
 
 if __name__ == "__main__":
     eco = EncodeWithBase64(

@@ -170,6 +170,8 @@ function RollCallPublish(url,csrftoken){
       }else if(status=='login'){
         document.getElementById('EssayPublishBoardCancel').click();
         document.getElementById('loginbutton').click();
+      }else if(status=='titleisexisted'){
+        alert('点名标题内容已存在！');
       }else{
         alert(status);
       }      

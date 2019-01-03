@@ -1,29 +1,5 @@
-from django.contrib import admin
-from NTWebsite.models import \
-    TopicArticleTheme,\
-    ArticleTags,\
-    ConfigParams,\
-    PreferredConfigName,\
-    NotificationTable,\
-    RecommendAuthor,\
-    SpecialTopicComment,\
-    SpecialTopicReadsIP,\
-    SpecialTopicFollow,\
-    SpecialTopicInfo,\
-    UserCircuseeCollect,\
-    RollCallReadsIP,\
-    RollCallDialogue,\
-    RollCallInfo,\
-    UserCollect,\
-    UserLink,\
-    TopicArticleStatistic,\
-    ArticleUserLikesOrDislikesTable,\
-    CommentUserLikesOrDislikesTable,\
-    ArticleReadsIP,\
-    User,\
-    CategoryInfo,\
-    ArticleComment,\
-    BlackList
+from .improtFiles.models_import_head import *
+
 # Register your models here.
 
 
