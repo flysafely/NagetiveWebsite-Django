@@ -1,4 +1,50 @@
-﻿function BlackListOperation(opreration,nickname,csrftoken){
+﻿// AES 秘钥
+var AesKey = "1111111111111111";
+ 
+// AES-128-CBC偏移量
+var CBCIV = "0000000000000000";
+ 
+// 加密选项
+var CBCOptions = {
+  iv: CryptoJS.enc.Utf8.parse(CBCIV),
+  mode:CryptoJS.mode.CBC,
+  padding: CryptoJS.pad.Pkcs7
+}
+/**
+ * AES加密（CBC模式，需要偏移量）
+ * @param data
+ * @returns {*}
+ */
+function encrypt(data){
+    var key = CryptoJS.enc.Utf8.parse(AesKey);
+    var secretData = CryptoJS.enc.Utf8.parse(data);
+    var encrypted = CryptoJS.AES.encrypt(
+    secretData, 
+    key, 
+    CBCOptions
+  );
+    return encrypted.toString();
+}
+ 
+/**
+ * AES解密（CBC模式，需要偏移量）
+ * @param data
+ * @returns {*}
+ */
+function decrypt(data){
+    var key = CryptoJS.enc.Utf8.parse(AesKey);
+    var decrypt = CryptoJS.AES.decrypt(
+    data, 
+    key, 
+    CBCOptions
+  );
+    return CryptoJS.enc.Utf8.stringify(decrypt).toString();
+}
+
+
+
+
+function BlackListOperation(opreration,nickname,csrftoken){
   $.post('/BlackListOperation/',{'Operation':opreration,csrfmiddlewaretoken: csrftoken,'UserNick':nickname},function(status){
     if (status == 'login'){
       document.getElementById('loginbutton').click();

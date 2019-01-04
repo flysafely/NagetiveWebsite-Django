@@ -9,6 +9,7 @@
     <link rel="shorcut icon" type="imagx/x-icon" href="/static/media/favicon.ico">
     <script type="text/javascript" src="/static/js/jQuery.min.js"></script>
     <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/static/js/aes.min.js"></script>
     <script type="text/javascript" src="/static/js/NTCustomFunctions.js"></script>
     <script type="text/javascript" src="/static/js/QRcode.min.js"></script>
     {% load static %}
@@ -85,6 +86,7 @@
                         </button>
                     </div>
                     <div class="AppHeader-userInfo">
+                        <button onclick="javascript:alert(encrypt('重庆市'))">abc</button>
                         <button title="通知栏" style="margin: -25px 70px 0px 0px;position:relative;" type="button" class="AppHeader-fakeButton Button--plain Button--withIcon Button--iconOnly" data-toggle='modal' data-target="#NotificationBar" onclick="javascript:GetNotificationInfo()">
                             <span style="align-items: center;position:absolute; margin:0xp 0px 0px 0px;">
                                 <svg fill="#8590A6" viewBox="0 0 38 32" width="1.2em" height="1.2em">

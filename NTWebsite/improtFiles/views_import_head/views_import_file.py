@@ -8,7 +8,7 @@ from django.shortcuts import render_to_response, render
 from django.template import Template, Context, RequestContext
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q
+#from django.db.models import Q
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 from ..models_import_head import *

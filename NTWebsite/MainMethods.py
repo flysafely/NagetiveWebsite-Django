@@ -1,12 +1,37 @@
 from NTWebsite import AppConfig
-# import AppConfig
+from .improtFiles.models_import_head import *
+#import AppConfig
+#from models.Configuration import *
+from NTWebsite.models.Configuration import *
+from django_redis import get_redis_connection
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+from oscrypto._win import symmetric
+
 import datetime
 import hashlib
 import base64
-from oscrypto._win import symmetric
-from NTWebsite.models.Configuration import *
 import os
 
+def QueryDataBaseCache(TableName, Method, TimeOut=60, Refresh=False, *Conditions, **Others):
+    QueryString = "%s.objects.%s(%s)%s[0:%s]" % (TableName, Method, ','.join(Conditions), Others['operations'] if 'operations' in Others.keys() else '', Others['limit'] if 'limit' in Others.keys() else '')
+    QueryString_MD5 = MD5(QueryString)
+    print(QueryString,QueryString_MD5)
+    #如下方式不支持存入除去byte string number以外的其他复杂数据类型
+    #RedisConn = get_redis_connection("default")
+    #RedisConn.setTimeOut = TimeOut
+    if cache.get(QueryString_MD5) and Refresh != True:
+        print('存在直接提取')
+        return cache.get(QueryString_MD5)
+    else:
+        print('写入中......')
+        QueryResult = eval("%s.objects.%s(%s)%s[0:%s]" % (TableName, Method,','.join(Conditions), Others['operations'] if 'operations' in Others.keys() else '', Others['limit'] if 'limit' in Others.keys() else ''))
+        cache.set(QueryString_MD5,QueryResult,TimeOut)
+        print('已经写入',QueryString_MD5)
+
+
+def WriteDataBaseCache():
+    pass
 
 def GetStringFromHtml(HtmlPath, filename, EncodeType="utf-8"):
     path = os.path.join(HtmlPath, filename)
@@ -17,17 +42,17 @@ def GetStringFromHtml(HtmlPath, filename, EncodeType="utf-8"):
 
 
 def Encrypt(data):
-
-    return symmetric.aes_cbc_pkcs7_encrypt(AppConfig.S_Key.encode('utf-8'),
+    Config = GetConfig()
+    return symmetric.aes_cbc_pkcs7_encrypt(Config['SecretKey'].encode('utf-8'),
                                            data.encode('utf-8'),
-                                           AppConfig.S_IV.encode('utf-8'))[1]
+                                           Config['SecretVI'].encode('utf-8'))[1]
 
 
 def Decrypt(data):
-
-    return symmetric.aes_cbc_pkcs7_decrypt(AppConfig.S_Key.encode('utf-8'),
+    Config = GetConfig()
+    return symmetric.aes_cbc_pkcs7_decrypt(Config['SecretKey'].encode('utf-8'),
                                            data,
-                                           AppConfig.S_IV.encode('utf-8')).decode('utf-8')
+                                           Config['SecretVI'].encode('utf-8')).decode('utf-8')
 
 
 def EncodeWithBase64(data):
@@ -42,18 +67,9 @@ def DecodeWithBase64(data):
     return base64.b64decode(data)
 
 
-def MD5(str):
-    if not os.path.isfile(filename):
-        return
-    myhash = hashlib.md5()
-    f = open(filename, 'rb')
-    while True:
-        b = f.read(8096)
-        if not b:
-            break
-        myhash.update(b)
-    f.close()
-    return myhash.hexdigest()
+def MD5(data):
+    hash_md5 = hashlib.md5(data.encode('utf-8'))
+    return hash_md5.hexdigest()
 
 
 def GetUserIP(request):
@@ -69,6 +85,8 @@ def GetConfig():
     config = {}
     ConfigName = PreferredConfigName.objects.all()[0].PC_Name.CP_Name
     ConfigObject = ConfigParams.objects.get(CP_Name=ConfigName)
+    config['SecretKey'] = ConfigObject.CP_SecretKey
+    config['SecretVI'] = ConfigObject.CP_SecretVI
     config['ReadsLimit'] = ConfigObject.CP_ReadsThreshold
     config['HotKeyWord'] = ConfigObject.CP_HotKeyWord
     config['TopicsLimit'] = ConfigObject.CP_TopicsLimit

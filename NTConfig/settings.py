@@ -77,13 +77,17 @@ TEMPLATES = [
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://:q63785095@127.0.0.1:6379/0",
+        "LOCATION": "redis://127.0.0.1:6379",
         "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 100},
+            "PASSWORD": "q63785095",
         }
-    }
+    },
 }
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'  # 引擎
+SESSION_CACHE_ALIAS = 'default'
 
 WSGI_APPLICATION = 'NTConfig.wsgi.application'
 

@@ -152,8 +152,10 @@ Section_Map_Field = {"Theme": {"TableName": "TopicArticleStatistic",
                      }
 
 
-StantPointStatusNumber = {'Like': 1, 'LikeCancel': -
-                          1, 'Dislike': 2, 'DislikeCancel': -2}
+StantPointStatusNumber = {'Like': 1, 
+                          'LikeCancel': -1, 
+                          'Dislike': 2, 
+                          'DislikeCancel': -2}
 
 UNIQUE_ERROR = {'UNIQUE constraint failed: NTWebsite_user.UT_Nick': '昵称已经存在!',
                 'UNIQUE constraint failed: NTWebsite_user.username': '用户名已经存在!',

@@ -76,8 +76,7 @@ def SpecialTopicsSquareInfoGet(request):
         NotificationCount = GetNotificationCount(request)
         Query_condition = aConf.Section_Map_Field[Part]
         SpecialTopicList = GetContextData(Query_condition['TableName'],
-                                        Query_condition['JudgementCondition'] + str(
-                                            ConfigData['ReadsLimit']) if Part != 'SpecialTopicSearch' else Query_condition['JudgementCondition'] + "'" + FilterWord + "'",
+                                        Query_condition['JudgementCondition'] + str(ConfigData['ReadsLimit']) if Part == 'SpecialTopicHot' else Query_condition['JudgementCondition'] + "'" + FilterWord + "'",
                                         operations=Query_condition['Operations'],
                                         limit=ConfigData['TopicsLimit'])
 
@@ -558,7 +557,8 @@ def TopicsInfoGet(request):
         if Part in ['Index', 'IndexOrderDate','Theme', 'Category', 'TopicSearch']:
             TopicsInfoList_Treated = []
             CategorysInfoList = CategoryInfo.objects.all()
-            RecommendAuthorInfoList = RecommendAuthor.objects.all()
+            #RecommendAuthorInfoList = RecommendAuthor.objects.all()
+            RecommendAuthorInfoList = mMs.QueryDataBaseCache('RecommendAuthor','all',60)
             for TopicInfo in TopicsInfoList:
                 ThemeList = TopicInfo.TAS_Theme.split(
                     '&') if TopicInfo.TAS_Theme != '' else []
@@ -736,6 +736,7 @@ def TasteDataOperation(tableName, fieldName, method, param):
 
 
 def Login(request):
+    mMs.DataBaseCacheReadOpreate('test','123test',60)
     if request.method == 'GET':
 
         return render(request, 'Nagetive-Login.html')
@@ -960,12 +961,14 @@ def GetContextData(TableName, *conditions, **others):
     # 关于查询数据库的性能优化:https://www.jb51.net/article/124433.htm
     # print("%s.objects.filter(%s%s'%s').order_by('%s')[0:aConf.IndexCardLimit]" % (
     #    TableName, field, Judgement, conditions, others['orderby']))
+    
+    #print('**************************', "%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']))
     '''
-    print('**************************', "%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']))
     QueryResult = cache.get("%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']))
     if QueryResult is None:
+        print('**************************',"%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']))
         QueryResult = eval("%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']))
-        cache.set("%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']),QueryResult)
+        cache.set("%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']),QueryResult,timeout=60)
     '''
     QueryResult = eval("%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']))    
     return QueryResult
