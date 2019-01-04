@@ -960,9 +960,15 @@ def GetContextData(TableName, *conditions, **others):
     # 关于查询数据库的性能优化:https://www.jb51.net/article/124433.htm
     # print("%s.objects.filter(%s%s'%s').order_by('%s')[0:aConf.IndexCardLimit]" % (
     #    TableName, field, Judgement, conditions, others['orderby']))
-    #print('**************************', "%s.objects.filter(%s)%s[0:%s]" % (
-    #    TableName, ','.join(conditions), others['operations'], others['limit']))
-    return eval("%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']))
+    '''
+    print('**************************', "%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']))
+    QueryResult = cache.get("%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']))
+    if QueryResult is None:
+        QueryResult = eval("%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']))
+        cache.set("%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']),QueryResult)
+    '''
+    QueryResult = eval("%s.objects.filter(%s)%s[0:%s]" % (TableName, ','.join(conditions), others['operations'], others['limit']))    
+    return QueryResult
 
 # 上传头像处理存储
 

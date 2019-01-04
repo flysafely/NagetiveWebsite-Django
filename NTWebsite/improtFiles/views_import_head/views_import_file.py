@@ -10,6 +10,7 @@ from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 from ..models_import_head import *
 
 from PIL import Image as im
@@ -47,3 +48,5 @@ import base64
 import uuid
 import time
 import json
+import redis
+from django_redis import get_redis_connection

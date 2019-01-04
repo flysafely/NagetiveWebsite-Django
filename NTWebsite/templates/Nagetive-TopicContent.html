@@ -33,7 +33,7 @@
                     <span id='DislikeSpan#{{exportList_info.0.TAS_ID}}'>{{exportList_info.0.TAS_Dislike}}</span>
                 </button>
                 <span style="color:#8590A6;float:right;padding:1px 0px 0px 0px;">被阅读 {{exportList_info.0.TAS_Read}}次</span>
-                <button title="分享" class="button button-primary button-box button-small" style="float:right;padding:0px 0px 0px 0px;" data-toggle='modal' data-target="#QRcodeBoard" onclick="javascript:QRcodeShare('/Topics/content/{{exportList_info.0.TAS_ID}}')">
+                <button title="分享" class="button button-primary button-box button-small" style="float:right;padding:0px 0px 0px 0px;" data-toggle='modal' data-target="#QRcodeBoard" onclick="javascript:QRcodeShare('/Topics?Part=Content&FilterWord={{exportList_info.0.TAS_ID}}&PageNumber=1')">
                     <span>
                         <svg viewBox="0 0 40 40" width="40" height="40" fill="#2894FF">
                             <path d="M2.931 7.89c-1.067.24-1.275 1.669-.318 2.207l5.277 2.908 8.168-4.776c.25-.127.477.198.273.39L9.05 14.66l.927 5.953c.18 1.084 1.593 1.376 2.182.456l9.644-15.242c.584-.892-.212-2.029-1.234-1.796L2.93 7.89z" fill-rule="enenodd">

@@ -73,7 +73,7 @@ TEMPLATES = [
         },
     },
 ]
-'''
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -83,7 +83,7 @@ CACHES = {
         }
     }
 }
-'''
+
 
 WSGI_APPLICATION = 'NTConfig.wsgi.application'
 
