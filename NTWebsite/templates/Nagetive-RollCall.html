@@ -4,9 +4,9 @@
 <div class="TopstoryMain" style="width:100%;">
 {% endifnotequal %}
     <div class="CardList">
-        {% for rollcallitem in exportList_info %}
-        <div id="{{rollcallitem.RCI_ID}}" class="Card TopstoryItem" style="padding:10px 14px 10px 14px;">
-            <div name='{{rollcallitem.RCI_ID}}' class="Button TopstoryItem-rightButton Button--plain" style="margin:-10px -6px 0px 0px;" type="button" onclick="javascript:CloseTopic(this)">
+        {% for rollcallcard in exportList_cards %}
+        <div id="{{rollcallcard.RCI_ID}}" class="Card TopstoryItem" style="padding:10px 14px 10px 14px;">
+            <div name='{{rollcallcard.RCI_ID}}' class="Button TopstoryItem-rightButton Button--plain" style="margin:-10px -6px 0px 0px;" type="button" onclick="javascript:CloseTopic(this)">
                 <svg viewBox="0 0 14 14" class="Icon Icon--remove" width="10" height="10" aria-hidden="true" style="width:10px;height:10px;">
                     <g>
                         <path d="M8.486 7l5.208-5.207c.408-.408.405-1.072-.006-1.483-.413-.413-1.074-.413-1.482-.005L7 5.515 1.793.304C1.385-.103.72-.1.31.31-.103.724-.103 1.385.305 1.793L5.515 7l-5.21 5.207c-.407.408-.404 1.072.007 1.483.413.413 1.074.413 1.482.005L7 8.485l5.207 5.21c.408.407 1.072.404 1.483-.007.413-.413.413-1.074.005-1.482L8.485 7z">
@@ -21,8 +21,8 @@
                         </path>
                     </svg>
                 </span>
-                <a href="/RollCallSquare?Part=RollCallContent&FilterWord={{rollcallitem.RCI_ID}}&PageNumber=1" style="text-decoration:none;font-size:18px;">
-                    <b>{{rollcallitem.RCI_Title}}</b>
+                <a href="/RollCallSquare?Part=RollCallContent&FilterWord={{rollcallcard.RCI_ID}}&PageNumber=1" style="text-decoration:none;font-size:18px;">
+                    <b>{{rollcallcard.RCI_Title}}</b>
                 </a>
                 <span>
                     <svg viewBox="0 -5 38 38" width="14" height="14" fill="#4F4F4F">
@@ -40,7 +40,7 @@
                             </g>
                         </svg>
                     </div>
-                    <a style="font-size:5px;color:#8590A6;text-decoration:none;padding:0px 0px 0px 20px;">{{rollcallitem.RCI_EditDate}}</a>
+                    <a style="font-size:5px;color:#8590A6;text-decoration:none;padding:0px 0px 0px 20px;">{{rollcallcard.RCI_EditDate}}</a>
                 </div>
 
                 <div style="float:right;">
@@ -53,7 +53,7 @@
                         </svg>
                     </div>
                     <div style="display:inline-block;margin-top:0px;">
-                        <a style="font-size:5px;color:#8590A6;text-decoration:none;">{{rollcallitem.RCI_Read}}</a>
+                        <a style="font-size:5px;color:#8590A6;text-decoration:none;">{{rollcallcard.RCI_Read}}</a>
                     </div>
                 </div>
             </div>
@@ -63,13 +63,13 @@
             <div class="row clearfix">
                 <div class="col-md-6 column" style="padding:0px 30px 0px 0px;">
                     <div style="float:right;">
-                        <a href="/UserProfile?UserNickName={{rollcallitem.RCI_Publisher.UT_Nick}}&Select=Publish&PageNumber=1">
-                            <img style="cursor:pointer;-webkit-border-radius: 12.5px;margin:5px 0px 0px 10px;display:inline-block;float:left;width:50px;width:25px;height:25px;" src="{{rollcallitem.RCI_Publisher.UT_Avatar}}" alt="">
+                        <a href="/UserProfile?UserNickName={{rollcallcard.RCI_Publisher.UT_Nick}}&Select=Publish&PageNumber=1">
+                            <img style="cursor:pointer;-webkit-border-radius: 12.5px;margin:5px 0px 0px 10px;display:inline-block;float:left;width:50px;width:25px;height:25px;" src="{{rollcallcard.RCI_Publisher.UT_Avatar}}" alt="">
                         </a>
                     </div>
                     <div style="float:right;display:inline-block;width:200px;padding:7px 0px 0px 0px;">
-                        <a href="/UserProfile?UserNickName={{rollcallitem.RCI_Publisher.UT_Nick}}&Select=Publish&PageNumber=1" style="font-size:14px;float:right;color:#8590A6;text-decoration:none;background:#A5CFF6;border-radius:5px;padding:0px 6px 2px 6px;color:#FFFFFF;text-shadow:1px 1px 2px #2894FF;">
-                            {{rollcallitem.RCI_Publisher.UT_Nick}}
+                        <a href="/UserProfile?UserNickName={{rollcallcard.RCI_Publisher.UT_Nick}}&Select=Publish&PageNumber=1" style="font-size:14px;float:right;color:#8590A6;text-decoration:none;background:#A5CFF6;border-radius:5px;padding:0px 6px 2px 6px;color:#FFFFFF;text-shadow:1px 1px 2px #2894FF;">
+                            {{rollcallcard.RCI_Publisher.UT_Nick}}
                         </a>
                     </div>
                 </div>
@@ -83,34 +83,16 @@
                 </div>
                 <div class="col-md-6 column" style="padding:0px 0px 0px 30px;">
                     <div>
-                        <a href="/UserProfile?UserNickName={{rollcallitem.RCI_Target.UT_Nick}}&Select=Publish&PageNumber=1"><img style="cursor:pointer;-webkit-border-radius: 12.5px;margin:5px 10px 0px 0px;display:inline-block;float:left;width:50px;width:25px;height:25px;" src="{{rollcallitem.RCI_Target.UT_Avatar}}" alt="">
+                        <a href="/UserProfile?UserNickName={{rollcallcard.RCI_Target.UT_Nick}}&Select=Publish&PageNumber=1"><img style="cursor:pointer;-webkit-border-radius: 12.5px;margin:5px 10px 0px 0px;display:inline-block;float:left;width:50px;width:25px;height:25px;" src="{{rollcallcard.RCI_Target.UT_Avatar}}" alt="">
                         </a>
                     </div>
                     <div style="display:inline-block;float:left;width:200px;padding:7px 0px 0px 0px;">
-                        <a href="/UserProfile?UserNickName={{rollcallitem.RCI_Target.UT_Nick}}&Select=Publish&PageNumber=1"  style="font-size:14px;color:#8590A6;text-decoration:none;background:#FABCBA;border-radius:5px;padding:0px 6px 2px 6px;color:#FFFFFF;text-shadow:1px 1px 2px #F1303C;">{{rollcallitem.RCI_Target.UT_Nick}}</a>
+                        <a href="/UserProfile?UserNickName={{rollcallcard.RCI_Target.UT_Nick}}&Select=Publish&PageNumber=1"  style="font-size:14px;color:#8590A6;text-decoration:none;background:#FABCBA;border-radius:5px;padding:0px 6px 2px 6px;color:#FFFFFF;text-shadow:1px 1px 2px #F1303C;">{{rollcallcard.RCI_Target.UT_Nick}}</a>
                     </div>      
                 </div>
             </div>
         </div>
         {% endfor %}
-        {% ifequal topic_display 'show' %}
-        <div class="Card TopstoryItem">
-            <div style="text-align:center;">
-                <span class="step-links" style="display:table-cell;font-size:12px;vertical-align:middle;text-align:center;display:inline">
-                {% if exportList_info.has_previous %}
-                    <a style="color:#FFFFFF;margin:2px 3px 0px 0px;background:#8590A6;border-radius:5px;padding:0px 6px 2px 6px;text-decoration:none;" href="{{export_href}}{{exportList_info.previous_page_number}}#anchorDiv">上一页</a>
-                {% endif %}
-                    <a style="color:#0084FF;margin:2px 3px 0px 0px;background:#D9EDFF;border-radius:5px;padding:0px 6px 2px 6px;text-decoration:none;" href = "javascript:void(0);" onclick = "javascript:JumpToPage('{{export_href}}','pagenuminput','anchorDiv')">前往</a>
-                    <input id='pagenuminput' type="text" class='form-control' style="width:7%;height:3%;display:inline;" value={{exportList_info.number}}>
-                    <span class="current">
-                        页,共计{{ exportList_info.paginator.num_pages }}页
-                    </span>
-                {% if exportList_info.has_next %}
-                    <a style="color:#FFFFFF;margin:2px 3px 0px 0px;background:#8590A6;border-radius:5px;padding:0px 6px 2px 6px;text-decoration:none;" href="{{export_href}}{{exportList_info.next_page_number}}#anchorDiv">下一页</a>
-                {% endif %}
-                </span>
-            </div>
-        </div>
-        {% endifequal %} 
+        {% include "Nagetive-Paginator.html" %} 
     </div>                                                        
 </div>

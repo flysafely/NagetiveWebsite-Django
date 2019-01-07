@@ -18,7 +18,7 @@ def CommentConversation(request):
 
         PageNumber = request.GET.get(
             'PageNumber') if 'PageNumber' in request.GET.keys() else ''
-
+        NotificationCount = GetNotificationCount(request)
         CommentsObject_Treated = []
         CommentInfos = []
         
@@ -49,16 +49,18 @@ def CommentConversation(request):
             else:
                 CommentInfos.append(('HasNoParent', '', CommentObject_Treated))
 
-        comment_display = 'show' if len(CommentsObject_Treated) > ConfigData['CommentsPageLimit'] else 'hide'
+        #comment_display = 'show' if len(CommentsObject_Treated) > ConfigData['CommentsPageLimit'] else 'hide'
         # 评论数据分页
         CommentsObject = RecordsetPaging(
             CommentInfos, PageNumber, ConfigData['CommentsPageLimit'])
+        page_card_display = CommentsObject.paginator.num_pages
         page_href = '/CommentConversation?ObjectID=' + ObjectID + '&replayeduser='+ ReplayedUserName +'&replayuser=' + ReplayUserName + '&from=' + From + '&PageNumber='
 
         return render(request, 'Nagetive-CommentConversationBase.html', {"SearchSource": From,
                                                                          "IsCommentConversation":'True',
-                                                                         "exportList_comment": CommentsObject,
-                                                                         "comment_display": comment_display,
+                                                                         "exportList_cards": CommentsObject,
+                                                                         #"comment_display": comment_display,
+                                                                         "page_card_display":str(page_card_display),
                                                                          "export_href": page_href,
                                                                          "search_placeholder": ConfigData['HotKeyWord'],
                                                                          "NotificationCount": str(NotificationCount)})
@@ -74,10 +76,10 @@ def SpecialTopicsSquareInfoGet(request):
         PageNumber = request.GET.get(
             'PageNumber') if 'PageNumber' in request.GET.keys() else ''
         NotificationCount = GetNotificationCount(request)
-        Query_condition = aConf.Section_Map_Field[Part]
-        SpecialTopicList = GetContextData(Query_condition['TableName'],
-                                        Query_condition['JudgementCondition'] + str(ConfigData['ReadsLimit']) if Part == 'SpecialTopicHot' else Query_condition['JudgementCondition'] + "'" + FilterWord + "'",
-                                        operations=Query_condition['Operations'],
+        Query_Params = aConf.Part_Dict[Part]
+        SpecialTopicList = GetContextData(Query_Params['TableName'],
+                                        Query_Params['DefaultField'] + str(ConfigData['ReadsLimit']) if Part == 'SpecialTopicHot' else Query_Params['DefaultField'] + "'" + FilterWord + "'",
+                                        operations=Query_Params['Operations'],
                                         limit=ConfigData['TopicsLimit'])
 
         if Part == 'SpecialTopicContent':
@@ -108,32 +110,34 @@ def SpecialTopicsSquareInfoGet(request):
                         ('HasParent', ParentCommentObject, commentobject))
                 else:
                     CommentInfos.append(('HasNoParent', '', commentobject))
-            comment_display = 'show' if len(CommentInfoList) > ConfigData['CommentsPageLimit'] else 'hide'
+            #comment_display = 'show' if len(CommentInfoList) > ConfigData['CommentsPageLimit'] else 'hide'
             # 评论数据分页
             CommentsObject = RecordsetPaging(
                 CommentInfos, PageNumber, ConfigData['CommentsPageLimit'])
+            page_card_display = CommentsObject.paginator.num_pages
+
             page_href = '/SpecialTopicSquare?Part=SpecialTopicContent&FilterWord=' + FilterWord + '&PageNumber='
-            return render(request, Query_condition['Template'], {"exportList_info": SpecialTopic,
+            return render(request, Query_Params['Template'], {"SpecialTopicContent": SpecialTopic,
                                                                  "SearchSource": 'SpecialTopic',
                                                                  'IsCommentConversation':'False',
                                                                  "export_collectstatus": followstatus,
-                                                                 "exportList_comment": CommentsObject,
-                                                                 "comment_display": comment_display,
+                                                                 "exportList_cards": CommentsObject,
+                                                                 "page_card_display": str(page_card_display),
                                                                  "export_href": page_href,
                                                                  "search_placeholder": ConfigData['HotKeyWord'],
                                                                  "NotificationCount": str(NotificationCount)})
         else:
-            page_display = 'show' if len(SpecialTopicList) > ConfigData['SpecialTopicsPageLimit'] else 'hide'
+            #page_display = 'show' if len(SpecialTopicList) > ConfigData['SpecialTopicsPageLimit'] else 'hide'
             SpecialTopicPageObjects = RecordsetPaging(
                 SpecialTopicList, PageNumber, ConfigData['SpecialTopicsPageLimit'])
-
+            page_card_display = SpecialTopicPageObjects.paginator.num_pages
             page_href = "/SpecialTopicSquare?Part=" + Part + '&FilterWord=' + FilterWord + '&PageNumber='
 
-            return render(request, Query_condition['Template'], {"exportList_info": SpecialTopicPageObjects,
+            return render(request, Query_Params['Template'], {"exportList_cards": SpecialTopicPageObjects,
                                                                  "SearchSource": 'SpecialTopic',
                                                                  'IsCommentConversation':'False',
                                                                  "export_from": 'SpecialTopicsSquare',
-                                                                 "topic_display": page_display,
+                                                                 "page_card_display": str(page_card_display),
                                                                  "export_href": page_href,
                                                                  "search_placeholder": ConfigData['HotKeyWord'],
                                                                  "NotificationCount": str(NotificationCount)})
@@ -169,22 +173,23 @@ def RollCallSquareInfoGet(request):
             'PageNumber') if 'PageNumber' in request.GET.keys() else ''
 
         NotificationCount = GetNotificationCount(request)
-        Query_condition = aConf.Section_Map_Field[Part]
-        RollCallList = GetContextData(Query_condition['TableName'],
-                                        Query_condition['JudgementCondition'] + str(
-                                            ConfigData['ReadsLimit']) if Part == 'RollCallIndex' else Query_condition['JudgementCondition'] + "'" + FilterWord + "'",
-                                        operations=Query_condition['Operations'],
+        Query_Params = aConf.Part_Dict[Part]
+        RollCallList = GetContextData(Query_Params['TableName'],
+                                        Query_Params['DefaultField'] + str(
+                                            ConfigData['ReadsLimit']) if Part == 'RollCallIndex' else Query_Params['DefaultField'] + "'" + FilterWord + "'",
+                                        operations=Query_Params['Operations'],
                                         limit=ConfigData['TopicsLimit'])
         if Part != 'RollCallContent':
-            page_display = 'show' if len(RollCallList) > ConfigData['RollCallsPageLimit'] else 'hide'
+
+            #page_display = 'show' if len(RollCallList) > ConfigData['RollCallsPageLimit'] else 'hide'
             RollCallPageObjects = RecordsetPaging(
                 RollCallList, PageNumber, ConfigData['RollCallsPageLimit'])
-
+            page_card_display = RollCallPageObjects.paginator.num_pages
             page_href = "/RollCallSquare?Part=" + Part + '&FilterWord=' + FilterWord + '&PageNumber='
 
-            return render(request, Query_condition['Template'], {"exportList_info": RollCallPageObjects,
+            return render(request, Query_Params['Template'], {"exportList_cards": RollCallPageObjects,
                                                                  "SearchSource": 'RollCall',
-                                                                 "topic_display": page_display,
+                                                                 "page_card_display": str(page_card_display),
                                                                  "export_href": page_href,
                                                                  "search_placeholder": ConfigData['HotKeyWord'],
                                                                  "NotificationCount": str(NotificationCount)})
@@ -217,7 +222,7 @@ def RollCallSquareInfoGet(request):
             else:
                 Replay_Display = 'hide'
                 Replay_location = 'left'
-            return render(request, Query_condition['Template'],{"export_RollCallDialogue":RollCallList,
+            return render(request, Query_Params['Template'],{"export_RollCallDialogue":RollCallList,
                                                                 "SearchSource":'RollCall',
                                                                 "Replay_Display":Replay_Display,
                                                                 "Replay_location":Replay_location,
@@ -228,10 +233,10 @@ def RollCallReplay(request):
         ConfigData = mMs.GetConfig()
         RollCallReplayContent = request.POST.get('RollCallReplayContent')
         FilterWord = request.POST.get('FilterWord')
-        Query_condition = aConf.Section_Map_Field['RollCallContent']
-        RollCallList = GetContextData(Query_condition['TableName'],
-                                        Query_condition['JudgementCondition'] + "'" + FilterWord + "'",
-                                        operations=Query_condition['Operations'],
+        Query_Params = aConf.Part_Dict['RollCallContent']
+        RollCallList = GetContextData(Query_Params['TableName'],
+                                        Query_Params['DefaultField'] + "'" + FilterWord + "'",
+                                        operations=Query_Params['Operations'],
                                         limit=ConfigData['TopicsLimit'])
         RollCallListLen = len(RollCallList)
         if RollCallList[RollCallListLen-1].RCD_Reply == '':
@@ -450,12 +455,12 @@ def UserProfile(request):
 
 
         NotificationCount = GetNotificationCount(request)
-        Query_condition = aConf.Section_Map_Field[PartSelection]
-        ObjectList = GetContextData(Query_condition['TableName'],
-                                        Query_condition['JudgementCondition'] +
+        Query_Params = aConf.Part_Dict[PartSelection]
+        ObjectList = GetContextData(Query_Params['TableName'],
+                                        Query_Params['DefaultField'] +
                                         "'" + username + "'",
-                                        Query_condition['ExtraCondition'],
-                                        operations=Query_condition['Operations'],
+                                        Query_Params['ExtraCondition'],
+                                        operations=Query_Params['Operations'],
                                         limit=ConfigData['TopicsLimit'],
                                         )
         topic_display = 'show' if len(ObjectList) > ConfigData['TopicsPageLimit'] else 'hide'
@@ -479,7 +484,7 @@ def UserProfile(request):
             tempList = []
             for TopicInfo in ObjectList:
                 tempList.append(
-                    str(eval("TopicInfo.%s.TAS_ID" % Query_condition['ForeignKeyField'])))
+                    str(eval("TopicInfo.%s.TAS_ID" % Query_Params['ForeignKeyField'])))
             for TopicID in set(tempList):
                 Topic = TopicArticleStatistic.objects.get(TAS_ID=TopicID)
                 ThemeList = Topic.TAS_Theme.split(
@@ -500,9 +505,9 @@ def UserProfile(request):
             export_type = 'Topic'
             for TopicInfo in ObjectList:
                 ThemeList = eval("TopicInfo.%s.TAS_Theme.split('&') if TopicInfo.%s.TAS_Theme != '' else []" % (
-                    Query_condition['ForeignKeyField'], Query_condition['ForeignKeyField']))
+                    Query_Params['ForeignKeyField'], Query_Params['ForeignKeyField']))
                 ObjectList_Treated.append(
-                    (eval("TopicInfo.%s" % Query_condition['ForeignKeyField']), ThemeList))
+                    (eval("TopicInfo.%s" % Query_Params['ForeignKeyField']), ThemeList))
         elif PartSelection == 'Follow':
             export_type = 'Follow'
             for TopicInfo in ObjectList:
@@ -511,6 +516,7 @@ def UserProfile(request):
         # 内容分页处理
         ObjectPaged = RecordsetPaging(
             ObjectList_Treated, PageNumber, ConfigData['TopicsPageLimit'])
+        page_card_display = ObjectPaged.paginator.num_pages
         page_href = '/UserProfile?UserNickName=' + \
             usernickname + '&Select=' + PartSelection + '&PageNumber='
         # 返回渲染
@@ -520,8 +526,8 @@ def UserProfile(request):
                                                              "SearchSource": 'Topic',
                                                              'export_userinfo': UserObject,
                                                              'export_linkinfo': LinkInfo,
-                                                             "exportList_info": ObjectPaged,
-                                                             "topic_display": topic_display,
+                                                             "exportList_cards": ObjectPaged,
+                                                             "page_card_display": str(page_card_display),
                                                              "export_href": page_href,
                                                              "search_placeholder": ConfigData['HotKeyWord'],
                                                              "NotificationCount": str(NotificationCount)
@@ -532,6 +538,9 @@ def indexView(request):
 
     return HttpResponseRedirect("/Topics?Part=Index&PageNumber=1")
 
+def PageMiss(request):
+
+    return render(request,'Nagetive-PageMiss.html')
 
 def TopicsInfoGet(request):
     if request.method == 'GET':
@@ -547,56 +556,66 @@ def TopicsInfoGet(request):
 
 
         NotificationCount = GetNotificationCount(request)
-        Query_condition = aConf.Section_Map_Field[Part]
-        TopicsInfoList = GetContextData(Query_condition['TableName'],
-                                        Query_condition['JudgementCondition'] + str(
-                                            ConfigData['ReadsLimit']) if Part in 'IndexOrderDate' else Query_condition['JudgementCondition'] + "'" + FilterWord + "'",
-                                        operations=Query_condition['Operations'],
+        Query_Params = aConf.Part_Dict[Part]
+        '''
+        TopicsInfoList = GetContextData(Query_Params['TableName'],
+                                        Query_Params['DefaultField'] + str(ConfigData['ReadsLimit']) if Part in 'IndexOrderDate' else Query_Params['DefaultField'] + "'" + FilterWord + "'",
+                                        operations=Query_Params['Operations'],
                                         limit=ConfigData['TopicsLimit'] if Part in ['Index', 'IndexOrderDate','Theme', 'Category', 'TopicSearch'] else ConfigData['CommentsLimit'])
-
+        '''
+        TopicsInfoList = mMs.QueryDataBaseCache(Query_Params['TableName'],'filter', 
+                                                exec(Query_Params['DefaultField'] + "=" + str(ConfigData['ReadsLimit'])) if Part in 'IndexOrderDate' else exec(Query_Params['DefaultField'] + "='" + FilterWord + "'"),
+                                                operations=Query_Params['Operations'],
+                                                limit=ConfigData['TopicsLimit'] if Part in ['Index', 'IndexOrderDate','Theme', 'Category', 'TopicSearch'] else ConfigData['CommentsLimit'])
         if Part in ['Index', 'IndexOrderDate','Theme', 'Category', 'TopicSearch']:
             TopicsInfoList_Treated = []
-            CategorysInfoList = CategoryInfo.objects.all()
+            #CategorysInfoList = CategoryInfo.objects.all()
+            CategorysInfoList = mMs.QueryDataBaseCache('CategoryInfo', 'all')
             #RecommendAuthorInfoList = RecommendAuthor.objects.all()
-            RecommendAuthorInfoList = mMs.QueryDataBaseCache('RecommendAuthor','all',60)
+            RecommendAuthorInfoList = mMs.QueryDataBaseCache('RecommendAuthor', 'all', 60, False)
             for TopicInfo in TopicsInfoList:
                 ThemeList = TopicInfo.TAS_Theme.split(
                     '&') if TopicInfo.TAS_Theme != '' else []
                 TopicsInfoList_Treated.append((TopicInfo, ThemeList))
-            topic_display = 'show' if len(TopicsInfoList) > ConfigData['TopicsPageLimit'] else 'hide'
+            #topic_display = 'show' if len(TopicsInfoList) > ConfigData['TopicsPageLimit'] else 'hide'
+            #page_card_display = 1 if len(TopicsInfoList) < ConfigData['TopicsPageLimit'] else ( len(TopicsInfoList) // ConfigData['TopicsPageLimit'] if len(TopicsInfoList) % ConfigData['TopicsPageLimit'] == 0 else len(TopicsInfoList) // ConfigData['TopicsPageLimit'] + 1)
+            
             TopicsObject = RecordsetPaging(
                 TopicsInfoList_Treated, PageNumber, ConfigData['TopicsPageLimit'])
-
+            page_card_display = TopicsObject.paginator.num_pages
             page_href = "/Topics?Part=" + Part + '&FilterWord=' + FilterWord + '&PageNumber='
 
-            return render(request, Query_condition['Template'], {"export_from": 'Index',
+            return render(request, Query_Params['Template'], {"export_from": 'Index',
                                                                  "SearchSource": 'Topic',
-                                                                 "exportList_info": TopicsObject,
+                                                                 "exportList_cards": TopicsObject,
                                                                  "exportList_category": CategorysInfoList,
                                                                  "exportList_author":RecommendAuthorInfoList,
-                                                                 "topic_display": topic_display,
+                                                                 #"topic_display": topic_display,
+                                                                 "page_card_display": str(page_card_display),
+                                                                 "current_pagenumber": str(PageNumber),
                                                                  "export_href": page_href,
                                                                  "search_placeholder": ConfigData['HotKeyWord'],
                                                                  "NotificationCount": str(NotificationCount)})
         elif Part == 'Content':
             ip = mMs.GetUserIP(request)
-            Article = TopicArticleStatistic.objects.get(TAS_ID=FilterWord)
-            if not ArticleReadsIP.objects.filter(AR_IP=ip, AR_ArticleID=Article).exists():
+            #Topic = TopicArticleStatistic.objects.get(TAS_ID=FilterWord)
+            Topic = mMs.QueryDataBaseCache('TopicArticleStatistic','get',60, False,'TAS_ID=' + "'" + FilterWord + "'")
+            if not ArticleReadsIP.objects.filter(AR_IP=ip, AR_ArticleID=Topic).exists():
                 try:
                     ArticleReadsIP.objects.create(
-                        AR_IP=ip, AR_ArticleID=Article)
-                    Article.TAS_Read += 1
-                    Article.save()
+                        AR_IP=ip, AR_ArticleID=Topic)
+                    Topic.TAS_Read += 1
+                    Topic.save()
                 except Exception as e:
                     return HttpResponse(aConf.UNIQUE_ERROR[str(e)])
             # 收藏状态
-            if not UserCollect.objects.filter(UC_UserNickName=request.user.username, UC_Article=Article):
+            if not UserCollect.objects.filter(UC_UserNickName=request.user.username, UC_Article=Topic):
                 collectstatus = 'show'
             else:
                 collectstatus = 'hide'
             # 评论数据获取
             CommentInfoList = ArticleComment.objects.filter(
-                AC_ArticleID=Article).order_by('-AC_EditDate')
+                AC_ArticleID=Topic).order_by('-AC_EditDate')
             CommentInfos = []
             for commentobject in CommentInfoList:
                 if commentobject.AC_Parent:
@@ -606,17 +625,20 @@ def TopicsInfoGet(request):
                         ('HasParent', ParentCommentObject, commentobject))
                 else:
                     CommentInfos.append(('HasNoParent', '', commentobject))
-            comment_display = 'show' if len(CommentInfoList) > ConfigData['CommentsPageLimit'] else 'hide'
+            #comment_display = 'show' if len(CommentInfoList) > ConfigData['CommentsPageLimit'] else 'hide'
+            #page_card_display = 1 if len(CommentInfoList) < ConfigData['CommentsPageLimit'] else ( len(CommentInfoList) // ConfigData['CommentsPageLimit'] if len(CommentInfoList) % ConfigData['CommentsPageLimit'] == 0 else len(CommentInfoList) // ConfigData['CommentsPageLimit'] + 1)
             # 评论数据分页
             CommentsObject = RecordsetPaging(
                 CommentInfos, PageNumber, ConfigData['CommentsPageLimit'])
+            page_card_display = CommentsObject.paginator.num_pages
             page_href = '/Topics?Part=Content&FilterWord=' + FilterWord + '&PageNumber='
-            return render(request, Query_condition['Template'], {"exportList_info": TopicsInfoList,
+            return render(request, Query_Params['Template'], {"TopicsContent": TopicsInfoList[0],
                                                                  "SearchSource": 'Topic',
                                                                  "IsCommentConversation":'False',
                                                                  "export_collectstatus": collectstatus,
-                                                                 "exportList_comment": CommentsObject,
-                                                                 "comment_display": comment_display,
+                                                                 "exportList_cards": CommentsObject,
+                                                                 "page_card_display": page_card_display,
+                                                                 "current_pagenumber": str(PageNumber),
                                                                  "export_href": page_href,
                                                                  "search_placeholder": ConfigData['HotKeyWord'],
                                                                  "NotificationCount": str(NotificationCount)})
@@ -736,7 +758,7 @@ def TasteDataOperation(tableName, fieldName, method, param):
 
 
 def Login(request):
-    mMs.DataBaseCacheReadOpreate('test','123test',60)
+
     if request.method == 'GET':
 
         return render(request, 'Nagetive-Login.html')

@@ -1,0 +1,45 @@
+{% load CustomFuncTags %}
+{% if not page_card_display == '1' %}
+<div class="Card TopstoryItem" style="padding:0px 0px 0px 0px">
+    <div style="text-align:center;margin:-10px 0px 0px 0px;">
+        <div class="col-md-12 column" style="height:60px;">
+            <ul class="pagination pagination-sm">
+                {% if exportList_cards.has_previous %}
+                <li>
+                     <a href="{{export_href}}{{exportList_cards.previous_page_number}}#anchorDiv"><b>&lt;</b></a>
+                </li>
+                {% endif %}
+
+                {% if page_card_display|NumberCompare:'5' == 'greater' %}
+                {% for num in 5|list:"1" %}
+                <li>
+                     <a href="{{export_href}}{{num}}#anchorDiv">{{num}}</a>
+                </li>
+                {% endfor %}
+                <li>
+                    <a>···</a>
+                </li>
+                <li>
+                    <a href="{{export_href}}{{ exportList_cards.paginator.num_pages }}#anchorDiv">{{ exportList_cards.paginator.num_pages }}</a>
+                </li>
+                {% else %}
+                {% for num in page_card_display|list:"1" %}
+                <li>
+                     <a href="{{export_href}}{{num}}#anchorDiv">{{num}}</a>
+                </li>
+                {% endfor %}                            
+                {% endif %}
+
+                {% if exportList_cards.has_next %}
+                <li>
+                     <a href="{{export_href}}{{exportList_cards.next_page_number}}#anchorDiv"><b>&gt;</b></a>
+                </li>
+                {% endif %}
+                <li>
+                     <a class="entry" id="entry">当前{{current_pagenumber}}页</a>
+                </li>                          
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}

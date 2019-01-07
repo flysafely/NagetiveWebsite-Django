@@ -44,6 +44,7 @@ urlpatterns = [
     path('CommentConversation', views.CommentConversation),
     path('RemoveNotificationInfo/', views.RemoveNotificationInfo),
     path('BlackListOperation/', views.BlackListOperation),
+    path('PageMiss/', views.PageMiss),
     re_path(r'^login/.*$', views.Login),
     re_path(r'^$', views.indexView),
     #re_path(r'^Topics/(?P<section>.*)/(?P<filterValue>.*)$', views.renderView),

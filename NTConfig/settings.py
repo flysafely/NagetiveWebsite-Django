@@ -75,13 +75,23 @@ TEMPLATES = [
 ]
 
 CACHES = {
-    "default": {
+    "default": {  # 连接池名称
+        # 以下是连接池的相关配置
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
+        "LOCATION": "redis://127.0.0.1:1101",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {"max_connections": 100},
-            "PASSWORD": "q63785095",
+            "PASSWORD": "W0izXy16fzgl8ALYBDfjmg==",
+        }
+    },
+    "flysafely": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:1101",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 100},
+            "PASSWORD": "W0izXy16fzgl8ALYBDfjmg==",
         }
     },
 }

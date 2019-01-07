@@ -1,17 +1,17 @@
-<div class="Card AnswerCard" id='ArticleBody' articleid='{{exportList_info.STI_ID}}'>
+<div class="Card AnswerCard" id='ArticleBody' articleid='{{SpecialTopicContent.STI_ID}}'>
     <div class="QuestionAnswer-content">
         <div class="ContentItem AnswerItem">
-            <img src="{{exportList_info.STI_Cover_SR965x300.url}}" width="965" height="300" alt="" style="position:absolute;left:1.6%;top:0%;-webkit-border-radius: 2px;box-shadow:0 0 2px 0 #000000;">
+            <img src="{{SpecialTopicContent.STI_Cover_SR965x300.url}}" width="965" height="300" alt="" style="position:absolute;left:1.6%;top:0%;-webkit-border-radius: 2px;box-shadow:0 0 2px 0 #000000;">
             <div style="padding:300px 0px 0px 0px;">
                 <h1 style="font-size:22px">
-                    <B>{{exportList_info.STI_Title}}</B>
+                    <B>{{SpecialTopicContent.STI_Title}}</B>
                 </h1></br>
                 <div class="FeedSource-firstline" style="margin:-10px 0px 10px 0px;">
                     <div>
-                        <img width=25 height=25 style="cursor:pointer;-webkit-border-radius: 12.5px;" src="{{exportList_info.STI_Publisher.UT_Avatar}}" title="{{exportList_info.STI_Publisher.username}}">
-                        <a style="color:black;text-decoration:none;" href="/UserProfile?UserNickName={{exportList_info.STI_Publisher}}&Select=Publish&PageNumber=1"><b>{{exportList_info.STI_Publisher}}</b></a>  
+                        <img width=25 height=25 style="cursor:pointer;-webkit-border-radius: 12.5px;" src="{{SpecialTopicContent.STI_Publisher.UT_Avatar}}" title="{{SpecialTopicContent.STI_Publisher.username}}">
+                        <a style="color:black;text-decoration:none;" href="/UserProfile?UserNickName={{SpecialTopicContent.STI_Publisher}}&Select=Publish&PageNumber=1"><b>{{SpecialTopicContent.STI_Publisher}}</b></a>  
                         <span style="padding: 0px 5px 0px 0px">,</span>                  
-                        <span style="padding: 0px 0px 0px 0px">{{exportList_info.STI_Publisher.UT_Description}}</span>
+                        <span style="padding: 0px 0px 0px 0px">{{SpecialTopicContent.STI_Publisher.UT_Description}}</span>
                     </div>
                 </div>
                 <div>
@@ -22,7 +22,7 @@
                                 </path>
                             </svg>
                         </span>
-                        <span style="color:#8590A6;padding:1px 0px 0px 0px;font-size:13px;">{{exportList_info.STI_Hot}}</span>
+                        <span style="color:#8590A6;padding:1px 0px 0px 0px;font-size:13px;">{{SpecialTopicContent.STI_Hot}}</span>
                     </div>
                     <div style="display:inline-block;padding:0px 4px 0px 0px;">
                         <div style="color:#8590A6;display:inline-block;position:absolute;padding:0px 0px 0px 0px;">
@@ -33,9 +33,9 @@
                                 </g>
                             </svg>
                         </div>
-                        <span style="color:#8590A6;padding:0px 0px 0px 20px;font-size:13px;">{{exportList_info.STI_EditDate}}</span>
+                        <span style="color:#8590A6;padding:0px 0px 0px 20px;font-size:13px;">{{SpecialTopicContent.STI_EditDate}}</span>
                     </div>
-                    <button title="分享" class="button button-primary button-box button-small" style="float:right;padding:0px 0px 0px 0px;" data-toggle='modal' data-target="#QRcodeBoard" onclick="javascript:QRcodeShare('/SpecialTopicSquare?Part=SpecialTopicContent&FilterWord={{exportList_info.STI_ID}}&PageNumber=1')">
+                    <button title="分享" class="button button-primary button-box button-small" style="float:right;padding:0px 0px 0px 0px;" data-toggle='modal' data-target="#QRcodeBoard" onclick="javascript:QRcodeShare('/SpecialTopicSquare?Part=SpecialTopicContent&FilterWord={{SpecialTopicContent.STI_ID}}&PageNumber=1')">
                         <span>
                             <svg viewBox="0 0 40 40" width="40" height="40" fill="#2894FF">
                                 <path d="M2.931 7.89c-1.067.24-1.275 1.669-.318 2.207l5.277 2.908 8.168-4.776c.25-.127.477.198.273.39L9.05 14.66l.927 5.953c.18 1.084 1.593 1.376 2.182.456l9.644-15.242c.584-.892-.212-2.029-1.234-1.796L2.93 7.89z" fill-rule="enenodd">
@@ -45,7 +45,7 @@
                         </span>
                     </button>
                     {% if export_collectstatus == 'show' %}
-                    <button id="CollectButton" title="关注" style="float:right;color:black;padding:0px 0px 0px 0px;" class="button button-primary button-box button-small" onclick="javascript:SpecialTopicFollow('/Follow/','{{ csrf_token }}','{{exportList_info.STI_ID}}')">
+                    <button id="CollectButton" title="关注" style="float:right;color:black;padding:0px 0px 0px 0px;" class="button button-primary button-box button-small" onclick="javascript:SpecialTopicFollow('/Follow/','{{ csrf_token }}','{{SpecialTopicContent.STI_ID}}')">
                         <svg viewBox='0 0 49 49' width='40' hight='40' fill='#2894FF'>
                             <path d='M16 6c-8.837 0-16 10-16 10s7.163 10 16 10 16-10 16-10-7.163-10-16-10zM16 22c-3.313 0-6-2.687-6-6s2.687-6 6-6 6 2.687 6 6-2.687 6-6 6zM16 12c-2.209 0-4 1.791-4 4s1.791 4 4 4 4-1.791 4-4-1.791-4-4-4z' fill='evenodd'></path>
                         </svg>
@@ -59,7 +59,7 @@
                 <div class="RichContent RichContent--unescapable">
                     <div class="RichContent-inner">
                         <span class="RichText ztext CopyrightRichText-richText">
-                            {{exportList_info.STI_Content|safe}}
+                            {{SpecialTopicContent.STI_Content|safe}}
                         </span>
                     </div>
                 </div>

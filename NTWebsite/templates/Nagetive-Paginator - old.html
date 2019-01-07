@@ -1,0 +1,19 @@
+{% ifequal topic_display 'show' %}
+<div class="Card TopstoryItem">
+    <div style="text-align:center;">
+        <span class="step-links" style="display:table-cell;font-size:12px;vertical-align:middle;text-align:center;display:inline">
+        {% if exportList_info.has_previous %}
+            <a style="color:#FFFFFF;margin:2px 3px 0px 0px;background:#8590A6;border-radius:5px;padding:0px 6px 2px 6px;text-decoration:none;" href="{{export_href}}{{exportList_info.previous_page_number}}#anchorDiv">上一页</a>
+        {% endif %}
+            <a style="color:#0084FF;margin:2px 3px 0px 0px;background:#D9EDFF;border-radius:5px;padding:0px 6px 2px 6px;text-decoration:none;" href = "javascript:void(0);" onclick = "javascript:JumpToPage('{{export_href}}','pagenuminput','anchorDiv')">前往</a>
+            <input id='pagenuminput' type="text" class='form-control' style="width:7%;height:3%;display:inline;" value={{exportList_info.number}}>
+            <span class="current">
+                页,共计{{ exportList_info.paginator.num_pages }}页
+            </span>
+        {% if exportList_info.has_next %}
+            <a style="color:#FFFFFF;margin:2px 3px 0px 0px;background:#8590A6;border-radius:5px;padding:0px 6px 2px 6px;text-decoration:none;" href="{{export_href}}{{exportList_info.next_page_number}}#anchorDiv">下一页</a>
+        {% endif %}
+        </span>
+    </div>
+</div>
+{% endifequal %}

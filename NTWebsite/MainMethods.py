@@ -3,9 +3,10 @@ from .improtFiles.models_import_head import *
 #import AppConfig
 #from models.Configuration import *
 from NTWebsite.models.Configuration import *
+from django.http import HttpResponse, HttpResponseRedirect
 from django_redis import get_redis_connection
 from django.views.decorators.cache import cache_page
-from django.core.cache import cache
+from django.core.cache import caches
 from oscrypto._win import symmetric
 
 import datetime
@@ -13,25 +14,60 @@ import hashlib
 import base64
 import os
 
-def QueryDataBaseCache(TableName, Method, TimeOut=60, Refresh=False, *Conditions, **Others):
-    QueryString = "%s.objects.%s(%s)%s[0:%s]" % (TableName, Method, ','.join(Conditions), Others['operations'] if 'operations' in Others.keys() else '', Others['limit'] if 'limit' in Others.keys() else '')
-    QueryString_MD5 = MD5(QueryString)
-    print(QueryString,QueryString_MD5)
-    #如下方式不支持存入除去byte string number以外的其他复杂数据类型
+
+def QueryDataBaseCache(**Others):
+    #print(QueryString, QueryString_MD5)
+    # 如下方式不支持存入除去byte string number以外的其他复杂数据类型
     #RedisConn = get_redis_connection("default")
+    #RedisConn2 = get_redis_connection("flysafely")
     #RedisConn.setTimeOut = TimeOut
-    if cache.get(QueryString_MD5) and Refresh != True:
-        print('存在直接提取')
-        return cache.get(QueryString_MD5)
+    # print(Others.keys())
+    CacheHandler = caches['default']
+    TableName = Others['TableName'] if 'TableName' in Others.keys() else ''
+    QueryMethod = Others['QueryMethod'] if 'QueryMethod' in Others.keys(
+    ) else ''
+    DefaultCondition = Others['DefaultCondition'] if 'DefaultCondition' in Others.keys(
+    ) else ''
+    TimeOut = Others['TimeOut'] if 'TimeOut' in Others.keys() else 60
+    Refresh = Others['Refresh'] if 'Refresh' in Others.keys() else False
+    limit = Others['limit'] if 'limit' in Others.keys() else None
+    operations = Others['operations'] if 'operations' in Others.keys() else ''
+
+    ConditionsList = []
+    DetailsLits = []
+    if Others:
+        for key in Others:
+            if key not in ['TableName', 'TimeOut', 'Refresh', 'limit', 'operations', 'QueryMethod', 'isLimit'] and key != 'DefaultCondition':
+                exec("%s_execCreate=Others['%s']" % (key, key))
+                ConditionsList.append(key + '=' + key + '_execCreate')
+                DetailsLits.append(repr(eval("%s_execCreate" % key)))
+            elif key == 'DefaultCondition':
+                ConditionsList.append(Others['DefaultCondition'])
+
+    QueryString = "%s.objects.%s(%s)%s%s#%s" % (TableName, QueryMethod, ','.join(
+        ConditionsList), operations, "[0:" + limit + "]" if limit else '', ','.join(DetailsLits))
+    QueryString_MD5 = MD5(QueryString)
+
+    if CacheHandler.get(QueryString_MD5) and Refresh != True:
+        if not CacheHandler.get(QueryString_MD5)[1]:
+            return CacheHandler.get(QueryString_MD5)[0]
+        else:
+            return CacheHandler.get(QueryString_MD5)[0]
     else:
-        print('写入中......')
-        QueryResult = eval("%s.objects.%s(%s)%s[0:%s]" % (TableName, Method,','.join(Conditions), Others['operations'] if 'operations' in Others.keys() else '', Others['limit'] if 'limit' in Others.keys() else ''))
-        cache.set(QueryString_MD5,QueryResult,TimeOut)
-        print('已经写入',QueryString_MD5)
+        try:
+            QueryResult = eval(QueryString)
+        except Exception as e:
+            raise e
+        else:
+            if Refresh != True:
+                CacheHandler.set(QueryString_MD5, (QueryResult,
+                                                   True if QueryResult else False,), TimeOut)
+            return QueryResult
 
 
-def WriteDataBaseCache():
-    pass
+def WriteToDataBaseFromCache():
+    return cache
+
 
 def GetStringFromHtml(HtmlPath, filename, EncodeType="utf-8"):
     path = os.path.join(HtmlPath, filename)
@@ -87,7 +123,7 @@ def GetConfig():
     ConfigObject = ConfigParams.objects.get(CP_Name=ConfigName)
     config['SecretKey'] = ConfigObject.CP_SecretKey
     config['SecretVI'] = ConfigObject.CP_SecretVI
-    config['ReadsLimit'] = ConfigObject.CP_ReadsThreshold
+    config['ReadsThreshold'] = ConfigObject.CP_ReadsThreshold
     config['HotKeyWord'] = ConfigObject.CP_HotKeyWord
     config['TopicsLimit'] = ConfigObject.CP_TopicsLimit
     config['TopicsPageLimit'] = ConfigObject.CP_TopicsPageLimit
