@@ -17,6 +17,7 @@ from PIL import Image as im
 from NTConfig import settings
 
 from NTWebsite import MainMethods as mMs
+from NTWebsite.MainMethods import QueryDataBaseCache as QDBC
 from NTWebsite import AppConfig as aConf
 '''
 from NTWebsite.models import \

@@ -1,17 +1,18 @@
 from django.db import models
 
+
 class ConfigParams(models.Model):
     """docstring for ConfigParams"""
 
     CP_Name = models.CharField(max_length=20, unique=True, verbose_name='配置名称')
-    CP_ReadsThreshold = models.IntegerField(
-        default=10, blank=False, verbose_name='上榜阅读量')
+    CP_ReadsThreshold = models.CharField(max_length=20,
+                                         default=10, blank=False, verbose_name='阅读量阈值')
     CP_HotKeyWord = models.CharField(max_length=20,
                                      default='差评', blank=False, verbose_name='热搜关键字')
-    CP_TopicsLimit = models.IntegerField(
-        default=100, blank=False, verbose_name='文章获取数量')
-    CP_CommentsLimit = models.IntegerField(
-        default=100, blank=False, verbose_name='文章评论获取数量')
+    CP_TopicsLimit = models.CharField(max_length=20,
+                                      default=100, blank=False, verbose_name='文章获取数量')
+    CP_CommentsLimit = models.CharField(max_length=20,
+                                        default=100, blank=False, verbose_name='文章评论获取数量')
     CP_SecretKey = models.CharField(
         max_length=16, blank=False, verbose_name='加密秘钥')
     CP_SecretVI = models.CharField(
