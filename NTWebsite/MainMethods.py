@@ -1,13 +1,16 @@
 from NTWebsite import AppConfig
 from .improtFiles.models_import_head import *
+
 #import AppConfig
 #from models.Configuration import *
+
 from NTWebsite.models.Configuration import *
 from django.http import HttpResponse, HttpResponseRedirect
 from django_redis import get_redis_connection
 from django.views.decorators.cache import cache_page
 from django.core.cache import caches
 from oscrypto._win import symmetric
+#from Crypto.Cipher import AES
 
 import datetime
 import hashlib
@@ -16,12 +19,9 @@ import os
 
 
 def QueryDataBaseCache(**Others):
-    #print(QueryString, QueryString_MD5)
     # 如下方式不支持存入除去byte string number以外的其他复杂数据类型
     #RedisConn = get_redis_connection("default")
-    #RedisConn2 = get_redis_connection("flysafely")
-    #RedisConn.setTimeOut = TimeOut
-    # print(Others.keys())
+
     CacheHandler = caches['default']
     TableName = Others['TableName'] if 'TableName' in Others.keys() else ''
     QueryMethod = Others['QueryMethod'] if 'QueryMethod' in Others.keys(
@@ -113,14 +113,16 @@ def GetUserIP(request):
 
         return request.META['HTTP_X_FORWARDED_FOR']
     else:
-
         return request.META['REMOTE_ADDR']
 
 
 def GetConfig():
     config = {}
-    ConfigName = PreferredConfigName.objects.all()[0].PC_Name.CP_Name
-    ConfigObject = ConfigParams.objects.get(CP_Name=ConfigName)
+    ConfigName = QueryDataBaseCache(TableName='PreferredConfigName', 
+                                    QueryMethod='all')[0].PC_Name.CP_Name
+    ConfigObject = QueryDataBaseCache(TableName='ConfigParams', 
+                                      QueryMethod='get', 
+                                      CP_Name=ConfigName)
     config['SecretKey'] = ConfigObject.CP_SecretKey
     config['SecretVI'] = ConfigObject.CP_SecretVI
     config['ReadsThreshold'] = ConfigObject.CP_ReadsThreshold
@@ -135,9 +137,24 @@ def GetConfig():
     return config
 
 
+def Aes_Padding_Content(data):
+    encodeData = data.encode('utf-8')
+    while len(encodeData) % 16 != 0:
+        encodeData += b' '
+
+    return encodeData
+
+
+def Aes_Padding_Key(key):
+    while len(key) % 16 != 0:
+        key += b' '
+    return key
+
+
 if __name__ == "__main__":
-    eco = EncodeWithBase64(
-        Encrypt('重庆市*&……&*%%*&……*&%*&%*&%*&%……*……&南岸区北冰露（）》》》》》。。。。'))
-    deco = DecodeWithBase64(eco)
-    print(Decrypt(deco))
+    aes = AES.new(Aes_Padding_Key(b'1111111111111111'),
+                  AES.MODE_CBC, iv=b'0000000000000000')
+    text = '重庆市'
+    encryptedText = aes.encrypt(Aes_Padding_Content(text))
+    print(encryptedText)
     # print(decrypt(Encrypt('flysafely')))

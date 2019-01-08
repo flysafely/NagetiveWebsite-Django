@@ -45,6 +45,7 @@ urlpatterns = [
     path('RemoveNotificationInfo/', views.RemoveNotificationInfo),
     path('BlackListOperation/', views.BlackListOperation),
     path('PageMiss/', views.PageMiss),
+    path('GetParam/', views.GetParam),
     re_path(r'^login/.*$', views.Login),
     re_path(r'^$', views.indexView),
     #re_path(r'^Topics/(?P<section>.*)/(?P<filterValue>.*)$', views.renderView),

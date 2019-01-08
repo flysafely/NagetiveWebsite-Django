@@ -1,3 +1,4 @@
+{% load CustomFuncTags %}
 {% include "Nagetive-TopNav.html" %}
 <div class="ProfileHeader" style="margin-top:35px;">
     <div class="Card">
@@ -48,21 +49,19 @@
                         <div>
                             <label for="">性别 :</label>
                             <select id="UserProfileSexOptions" {{ selforguest.1 }} style="margin:0px 0px 5px 0px;border:none;width:200px;">
-                                {% ifequal export_userinfo.UT_Sex '男' %}
+                                {% if export_userinfo.UT_Sex == '男' %}
                                 <option selected="selected">男</option>
-                                {% else %}
-                                <option>男</option>
-                                {% endifequal %}
-                                {% ifequal export_userinfo.UT_Sex '女' %}
-                                <option selected="selected">女</option>
-                                {% else %}
                                 <option>女</option>
-                                {% endifequal %}
-                                {% ifequal export_userinfo.UT_Sex '未公开' %}
-                                <option selected="selected">未公开</option>
-                                {% else %}
                                 <option>未公开</option>
-                                {% endifequal %}
+                                {% elif export_userinfo.UT_Sex == '女' %}
+                                <option>男</option>
+                                <option selected="selected">女</option>
+                                <option>未公开</option>
+                                {% elif export_userinfo.UT_Sex == '未公开' %}
+                                <option>男</option>
+                                <option>女</option>
+                                <option selected="selected">未公开</option>
+                                {% endif %}
                             </select>
                             <svg viewBox="0 0 38 38" style="height: 20px; width: 20px;margin-bottom:0px" {{ selforguest.2 }}>
                                 <g>

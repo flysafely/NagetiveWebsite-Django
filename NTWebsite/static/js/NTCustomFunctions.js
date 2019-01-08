@@ -1,46 +1,43 @@
-﻿// AES 秘钥
-var AesKey = "1111111111111111";
- 
-// AES-128-CBC偏移量
-var CBCIV = "0000000000000000";
- 
+﻿
 // 加密选项
-var CBCOptions = {
-  iv: CryptoJS.enc.Utf8.parse(CBCIV),
-  mode:CryptoJS.mode.CBC,
-  padding: CryptoJS.pad.Pkcs7
+function CreateCBCOptions(iv){
+  return {
+    iv: CryptoJS.enc.Utf8.parse(iv),
+    mode:CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7
+  };  
 }
-/**
- * AES加密（CBC模式，需要偏移量）
- * @param data
- * @returns {*}
- */
-function encrypt(data){
-    var key = CryptoJS.enc.Utf8.parse(AesKey);
+
+function encrypt(data,aeskey,cbciv){
+    var key = CryptoJS.enc.Utf8.parse(aeskey);
     var secretData = CryptoJS.enc.Utf8.parse(data);
     var encrypted = CryptoJS.AES.encrypt(
     secretData, 
     key, 
-    CBCOptions
+    CreateCBCOptions(cbciv)
   );
     return encrypted.toString();
 }
- 
-/**
- * AES解密（CBC模式，需要偏移量）
- * @param data
- * @returns {*}
- */
-function decrypt(data){
-    var key = CryptoJS.enc.Utf8.parse(AesKey);
+
+
+function DoEncrypt(keyword,csrftoken,data){
+  $.ajaxSettings.async = false;
+  var jsonData = new Object();
+  $.post('/GetParam/',{csrfmiddlewaretoken: csrftoken,'KeyWord':keyword},function(result){
+    jsonData = JSON.parse(result);
+  });
+  return encrypt(data,jsonData[0],jsonData[1]);
+}
+
+function decrypt(data,aeskey,cbciv){
+    var key = CryptoJS.enc.Utf8.parse(aeskey);
     var decrypt = CryptoJS.AES.decrypt(
     data, 
     key, 
-    CBCOptions
+    CreateCBCOptions(cbciv)
   );
     return CryptoJS.enc.Utf8.stringify(decrypt).toString();
 }
-
 
 
 
@@ -516,8 +513,8 @@ function CommentSubmit(url,csrftoken,from)
 
 function LoginSubmit(url,csrftoken)
 {   
-    var username = document.getElementById('loginusername').value;
-    var password = document.getElementById('loginpassword').value;
+    var username = DoEncrypt('SecretKey',csrftoken,document.getElementById('loginusername').value);
+    var password = DoEncrypt('SecretKey',csrftoken,document.getElementById('loginpassword').value);
     $.post(url,{csrfmiddlewaretoken: csrftoken,'username':username,'password':password},function(status){if(status){alert('登录成功!');location.reload();}else{alert('用户名或密码错误！');}});
 }
 
@@ -535,10 +532,10 @@ function RegistSubmit(url,csrftoken)
     var userimagedata = document.getElementById('UserImageShow').src;
     var format = document.getElementById('UserImageInput').value;
     var userimageformat = format.split('.')[1];
-    var username = document.getElementById('registusername').value;
-    var usernickname = document.getElementById('registusernickname').value;
-    var password = document.getElementById('registpassword').value;
-    var email = document.getElementById('registemail').value;
+    var username = DoEncrypt('SecretKey',csrftoken,document.getElementById('registusername').value);
+    var usernickname = DoEncrypt('SecretKey',csrftoken,document.getElementById('registusernickname').value);
+    var password = DoEncrypt('SecretKey',csrftoken,document.getElementById('registpassword').value);
+    var email = DoEncrypt('SecretKey',csrftoken,document.getElementById('registemail').value);
     $.post(url,{csrfmiddlewaretoken: csrftoken,'userimagedata':userimagedata,'userimageformat':userimageformat,'username':username,'usernickname':usernickname,'password':password,'email':email},function(status){if(status=='ok'){alert('注册成功!');location.reload();}else{alert(status);}});
 }
 

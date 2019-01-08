@@ -438,7 +438,8 @@ def Follow(request):
                               username=UserName)
             Topic = QDBC(TableName='SpecialTopicInfo',
                          QueryMethod='get',
-                         STI_ID=SpecialTopicID)
+                         STI_ID=SpecialTopicID,
+                         Refresh=True)
             if not QDBC(TableName='SpecialTopicFollow',
                         QueryMethod='filter',
                         STF_UserNickName=request.user.username, 
@@ -471,41 +472,42 @@ def Link(request):
             userObject = QDBC(TableName='User',
                               QueryMethod='get',
                               UT_Nick=UserNickName)
-            if QDBC(TableName='UserLink',
-                    QueryMethod='filter',
-                    UT_Nick=UserNickName,
-                    UL_UserBeLinked=userObject.username, 
-                    UL_UserLinking=request.user,
-                    Refresh=True):
-                if QDBC(TableName='BlackList',
+            if not QDBC(TableName='UserLink',
                         QueryMethod='filter',
-                        BL_User=request.user,
-                        BL_Handler=userObject,
+                        UL_UserBeLinked=userObject.username, 
+                        UL_UserLinking=request.user,
                         Refresh=True):
-                    BlackListDeleteObject = QDBC(TableName='BlackList',
-                                                 QueryMethod='filter',
-                                                 BL_User=userObject,
-                                                 BL_Handler=request.user,
-                                                 Refresh=True)
-                    if BlackListDeleteObject:
-                        BlackListDeleteObject[0].delete()
-                        return HttpResponse('blockcancel')
+
+                    if not QDBC(TableName='BlackList',
+                             QueryMethod='filter',
+                             BL_User=request.user,
+                             BL_Handler=userObject,
+                             Refresh=True):
+                        BlackListDeleteObject = QDBC(TableName='BlackList',
+                                                     QueryMethod='filter',
+                                                     BL_User=userObject,
+                                                     BL_Handler=request.user,
+                                                     Refresh=True)
+                        if BlackListDeleteObject:
+                            BlackListDeleteObject[0].delete()
+                            return HttpResponse('blockcancel')
+
+                        else:
+                            QDBC(TableName='UserLink',
+                                 QueryMethod='create',
+                                 UL_UserBeLinked=userObject, 
+                                 UL_UserLinking=request.user,
+                                 Refresh=True)
+                            UserInfoOperation(request.user.username,'UT_FoucusCount','+=1')
+                            UserInfoOperation(userObject.username,'UT_FansCount','+=1')
+                            return HttpResponse('link')
                     else:
-                        QDBC(TableName='UserLink',
-                             QueryMethod='create',
-                             UL_UserBeLinked=userObject, 
-                             UL_UserLinking=request.user,
-                             Refresh=True)
-                        UserInfoOperation(request.user.username,'UT_FoucusCount','+=1')
-                        UserInfoOperation(userObject.username,'UT_FansCount','+=1')
-                        return HttpResponse('link')
-                else:
-                    return HttpResponse('block')
+                        return HttpResponse('block')
             else:
                 QDBC(TableName='UserLink',
-                     QueryMethod='filter',
+                     QueryMethod='get',
                      UL_UserBeLinked=userObject, 
-                     UL_UserLinking=request.user)[0].delete()
+                     UL_UserLinking=request.user,operations='.delete()',Refresh=True)
                 UserInfoOperation(request.user.username,'UT_FoucusCount','-=1')
                 UserInfoOperation(userObject.username,'UT_FansCount','-=1')
                 return HttpResponse('cancel')
@@ -570,15 +572,17 @@ def UserProfile(request):
                     UL_UserBeLinked=QDBC(TableName='User',
                                          QueryMethod='get',
                                          UT_Nick=usernickname).username, 
-                    UL_UserLinking=request.user):
+                    UL_UserLinking=request.user,
+                    Refresh=True):
                 status = ('readonly', 'disabled',
                           'hidden', 'selected', 'linked', 'UserProfile')
-            if QDBC(TableName='BlackList',
-                    QueryMethod='filter',
-                    BL_User=QDBC(TableName='User',
-                                 QueryMethod='get',
-                                 UT_Nick=usernickname),
-                    BL_Handler=request.user):
+            elif QDBC(TableName='BlackList',
+                      QueryMethod='filter',
+                      BL_User=QDBC(TableName='User',
+                                   QueryMethod='get',
+                                   UT_Nick=usernickname),
+                      BL_Handler=request.user,
+                      Refresh=True):
                 status = ('readonly', 'disabled',
                           'hidden', 'selected', 'blocked', 'UserProfile')                
             else:
@@ -596,7 +600,8 @@ def UserProfile(request):
                           QueryMethod='filter',
                           DefaultCondition=Query_Params['DefaultField'] + "='" + username + "'",
                           operations=Query_Params['Operations'],
-                          limit=ConfigData['TopicsLimit'])
+                          limit=ConfigData['TopicsLimit'],
+                          Refresh=True)
 
 
         # 获取关注信息
@@ -689,6 +694,7 @@ def PageMiss(request):
     return render(request,'Nagetive-PageMiss.html')
 
 def TopicsInfoGet(request):
+
     if request.method == 'GET':
 
         ConfigData = mMs.GetConfig()
@@ -926,8 +932,9 @@ def Login(request):
 
     if request.method == 'POST':
         # 注册信息获取
-        username = request.POST.get('username')
-        userpassword = request.POST.get('password')
+        username = mMs.Decrypt(mMs.DecodeWithBase64(request.POST.get('username')))
+        userpassword = mMs.Decrypt(mMs.DecodeWithBase64(request.POST.get('password')))
+        print(username,userpassword)
         user = auth.authenticate(username=username, password=userpassword)
 
         if user:
@@ -944,10 +951,10 @@ def Regist(request):
     if request.method == 'POST':
         userimageURL = UserAvatarOperation(request.POST.get(
             'userimagedata'), request.POST.get('userimageformat'))
-        username = request.POST.get('username')
-        usernickname = request.POST.get('usernickname')
-        password = request.POST.get('password')
-        email = request.POST.get('email')
+        username = mMs.Decrypt(mMs.DecodeWithBase64(request.POST.get('username')))
+        usernickname = mMs.Decrypt(mMs.DecodeWithBase64(request.POST.get('usernickname')))
+        password = mMs.Decrypt(mMs.DecodeWithBase64(request.POST.get('password')))
+        email = mMs.Decrypt(mMs.DecodeWithBase64(request.POST.get('email')))
         try:
                 #CheckInDate = str(time.strftime('%Y-%m-%d',time.localtime(time.time())))
                 # 这里通过前端注册账号一定要是要create_user 不然后期登录的时候  auth.authenticate无法验证用户名和密码
@@ -1224,3 +1231,18 @@ def CheckExists(username):
     return len(QDBC(TableName='UserTable',
                     QueryMethod='filter',
                     UT_Name=username))
+
+def StatisticalDataUpdata(objectStr,methodDsc):
+    exec(objectStr + methodDsc)
+    exec(objectStr + '.save()')
+
+
+def GetParam(request):
+    if request.method == "POST":
+        KeyWord = request.POST.get('KeyWord')
+        if KeyWord == 'SecretKey':
+            Params = mMs.GetConfig()
+            jsondata = json.dumps([Params['SecretKey'],Params['SecretVI']],ensure_ascii=False)
+            return HttpResponse(jsondata)
+        else:
+            pass

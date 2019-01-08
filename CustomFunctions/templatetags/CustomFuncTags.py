@@ -27,3 +27,7 @@ def do_compare(value, description):
     else:
         result = 'equal'
     return result
+
+@register.filter('GetDictValue')
+def get_value(dict, key):
+    return dict[key]
